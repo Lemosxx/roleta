@@ -27,7 +27,6 @@ body {
     color: #4a4a4a;
 }
 
-/* Painel estilo Vidro Fosco (Premium) */
 .glass-panel {
     background: rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(15px);
@@ -44,10 +43,7 @@ body {
     z-index: 10;
 }
 
-#tela2, #tela3 {
-    display: none;
-    opacity: 0;
-}
+#tela2, #tela3 { display: none; opacity: 0; }
 
 h2 { color: #d81b60; margin-top: 0; font-size: 1.8rem; }
 h3 { color: #e91e63; margin-top: 15px; font-size: 1.3rem; }
@@ -115,7 +111,6 @@ button {
     color: white;
     width: 80%;
     margin-top: 15px;
-    transition: transform 0.2s;
     animation: pulse-anim 2s infinite;
 }
 
@@ -124,8 +119,6 @@ button {
     50% { transform: scale(1.05); }
     100% { transform: scale(1); }
 }
-
-#girar:active { transform: scale(0.95); }
 
 #btn-sim {
     background: linear-gradient(45deg, #ff416c, #ff4b2b);
@@ -139,6 +132,7 @@ button {
     color: #880e4f;
     position: relative;
     z-index: 50;
+    transition: opacity 0.2s, transform 0.1s;
 }
 
 .resultado {
@@ -149,7 +143,6 @@ button {
     min-height: 28px;
 }
 
-/* === DETALHES DO ENCONTRO === */
 .detalhes {
     text-align: left;
     background: rgba(255, 255, 255, 0.7);
@@ -161,15 +154,10 @@ button {
 .detalhes h3 { margin-top: 10px; font-size: 1.2rem; color: #ad1457; }
 .detalhes h3:first-child { margin-top: 0; }
 
-/* === EFEITOS E ANIMAÇÕES === */
-@keyframes fall {
+/* === ANIMAÇÃO DE QUEDA (BALÕES E CORAÇÕES) === */
+@keyframes chuva {
     0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
-}
-@keyframes floatUp {
-    0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
-    20% { opacity: 1; }
-    100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+    100% { transform: translateY(110vh) rotate(20deg); opacity: 0; }
 }
 </style>
 </head>
@@ -178,12 +166,10 @@ button {
 
 <div class="glass-panel" id="tela1">
     <h2>🎡 Roleta do Amor 🎡</h2>
-
     <div class="roleta-container">
         <div class="ponteiro">🔻</div>
         <canvas id="roleta" width="300" height="300"></canvas>
     </div>
-
     <button id="girar">Girar Sorte 💖</button>
     <div class="resultado" id="resultado"></div>
 </div>
@@ -191,9 +177,7 @@ button {
 <div class="glass-panel" id="tela2">
     <h2>🎉 DEU CINEMA!</h2>
     <img src="https://media.tenor.com/efhiB6ED9g8AAAAi/tkthao219-bubududu.gif">
-    
     <p>O destino escolheu! Aceita ir comigo? ❤️🍿</p>
-
     <div class="area-botoes">
         <button id="btn-sim">Sim! ❤️</button>
         <button id="btn-nao">Não 😢</button>
@@ -203,32 +187,28 @@ button {
 <div class="glass-panel" id="tela3">
     <h2>Nosso encontro 💕</h2>
     <img src="https://media.tenor.com/gUiu1zyxfzYAAAAi/bear-kiss-bear-kisses.gif">
-
     <div class="detalhes">
-        <h3>🎬 Filme: Vingadores <br><span style="font-size:0.9rem; color:#888;">(ou o que você quiser)</span></h3>
+        <h3>🎬 Filme: Vingadores <br><span style="font-size:0.9rem; color:#888;">(ou o que você escolher)</span></h3>
         <h3>📍 Local: Shopping Recife</h3>
         <h3>🕒 Horário: 20:00</h3>
     </div>
-
     <p style="margin-top:15px; color:#e91e63; font-weight:bold;">Mal posso esperar pra te ver! ❤️</p>
 </div>
 
 <script>
-// === CONFIGURAÇÕES DA ROLETA ===
 const canvas = document.getElementById("roleta");
 const ctx = canvas.getContext("2d");
 const btnGirar = document.getElementById("girar");
 const resultado = document.getElementById("resultado");
-
 const tela1 = document.getElementById("tela1");
 const tela2 = document.getElementById("tela2");
 const tela3 = document.getElementById("tela3");
-
 const btnSim = document.getElementById("btn-sim");
 const btnNao = document.getElementById("btn-nao");
 
-// Som de sininho mágico para o final
-const audio = new Audio("https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3");
+// Áudios
+const somGiro = new Audio("https://www.soundjay.com/button/sounds/button-09.mp3"); // Tique-taque
+const somVitoria = new Audio("https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3");
 
 const premios = [
     "Carrinho Shein 🛍️", "Cupom R$100 💎", "Jantar 🍝",
@@ -242,7 +222,7 @@ let rotacaoAtual = 0;
 let girando = false;
 let escalaSim = 1;
 
-// === DESENHAR A ROLETA ===
+// Desenhar roleta
 function desenhar() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     for (let i = 0; i < total; i++) {
@@ -268,41 +248,24 @@ function desenhar() {
 }
 desenhar();
 
-// === EFEITOS ESPECIAIS (CONFETE E CORAÇÃO) ===
-function atirarConfetes() {
-    const coresConfete = ['#ff416c', '#ff4b2b', '#fbc2eb', '#ffffff', '#ffd700'];
-    for (let i = 0; i < 100; i++) {
+// Efeito de Chuva Final (Balões e Corações caindo)
+function choverBaloesECoracoes() {
+    const emojis = ['🎈', '❤️', '🎈', '💖', '🎈', '💕', '✨', '🍿'];
+    for (let i = 0; i < 70; i++) {
         const el = document.createElement("div");
+        el.innerText = emojis[Math.floor(Math.random() * emojis.length)];
         el.style.position = "fixed";
-        el.style.width = Math.random() * 8 + 4 + "px";
-        el.style.height = Math.random() * 15 + 5 + "px";
-        el.style.background = coresConfete[Math.floor(Math.random() * coresConfete.length)];
-        el.style.top = "-20px";
+        el.style.top = "-50px";
         el.style.left = Math.random() * 100 + "vw";
-        el.style.borderRadius = "2px";
+        el.style.fontSize = Math.random() * 20 + 20 + "px";
         el.style.zIndex = "9999";
-        el.style.animation = `fall ${Math.random() * 2 + 1.5}s linear forwards`;
+        el.style.animation = `chuva ${Math.random() * 3 + 2}s linear forwards`;
         document.body.appendChild(el);
-        setTimeout(() => el.remove(), 3500);
+        setTimeout(() => el.remove(), 5000);
     }
 }
 
-function choverCoracoes() {
-    for (let i = 0; i < 50; i++) {
-        const heart = document.createElement("div");
-        heart.innerText = Math.random() > 0.5 ? "💖" : "❤️";
-        heart.style.position = "fixed";
-        heart.style.bottom = "-20px";
-        heart.style.left = Math.random() * 100 + "vw";
-        heart.style.fontSize = Math.random() * 20 + 15 + "px";
-        heart.style.zIndex = "9999";
-        heart.style.animation = `floatUp ${Math.random() * 2 + 2}s ease-in forwards`;
-        document.body.appendChild(heart);
-        setTimeout(() => heart.remove(), 4000);
-    }
-}
-
-// === LÓGICA DE GIRAR (COM SUSPENSE E VIBRAÇÃO) ===
+// Lógica de Girar
 btnGirar.addEventListener("touchstart", iniciarGiro, { passive: false });
 btnGirar.addEventListener("click", iniciarGiro);
 
@@ -311,40 +274,41 @@ function iniciarGiro(e) {
     if (girando) return;
     girando = true;
 
-    btnGirar.style.animation = "none"; // Para de pulsar
+    btnGirar.style.animation = "none"; 
     resultado.innerText = "Cruzando os dedos... 🫣";
 
-    // Simula a vibração dos "estalos" da roleta enquanto gira (funciona em Android e em alguns iOS)
-    let tempoVibracao = 0;
-    let intervaloVibracao = setInterval(() => {
-        if (navigator.vibrate) navigator.vibrate(15);
-        tempoVibracao += 150;
-        if (tempoVibracao > 6500) clearInterval(intervaloVibracao); // Para a vibração perto do fim
-    }, 150);
+    // Libera o áudio no iOS no primeiro clique
+    somGiro.play().catch(()=>{});
+    somGiro.pause();
 
-    const voltas = 8; // Muitas voltas
-    const indexAlvo = 6; // O CINEMA
+    // Loop do tique-taque e vibração (Vibração só pega no Android)
+    let tempoDecorrido = 0;
+    let intervaloGiro = setInterval(() => {
+        somGiro.currentTime = 0;
+        somGiro.play().catch(()=>{});
+        if (navigator.vibrate) navigator.vibrate(10); 
+        tempoDecorrido += 200;
+        if (tempoDecorrido > 6500) clearInterval(intervaloGiro); 
+    }, 200);
+
+    const voltas = 8; 
+    const indexAlvo = 6; 
     
-    // Matemática milimétrica: faz a roleta parar quase na pontinha final do "Cinema", 
-    // rastejando lentamente pela fatia anterior (Carrinho Shein) para criar a enganação.
     const anguloFatia = 360 / total;
     const angAlvo = (total - indexAlvo) * anguloFatia + 270 - (anguloFatia / 2) - 10; 
 
     rotacaoAtual += (360 * voltas) + angAlvo;
 
-    // Transição de SETE SEGUNDOS com curva super suave no final (A "enganação")
     canvas.style.transition = "transform 7s cubic-bezier(0.1, 0.8, 0.1, 1)"; 
     canvas.style.transform = `rotate(${rotacaoAtual}deg)`;
 
-    // Quando finalmente parar (após 7 segundos)
     setTimeout(() => {
-        audio.play().catch(e => console.log("Áudio necessita interação prévia"));
-        if (navigator.vibrate) navigator.vibrate([200, 100, 200]); // Vibração de vitória
+        somVitoria.play().catch(()=>{});
+        if (navigator.vibrate) navigator.vibrate([200, 100, 200]); // Android
         
-        atirarConfetes();
         resultado.innerText = "🎉 AÍ SIM!!!";
+        choverBaloesECoracoes(); // Confetes provisórios
         
-        // Espera 2 segundinhos pra ela comemorar e troca de tela
         setTimeout(() => {
             tela1.style.opacity = "0";
             setTimeout(() => {
@@ -357,22 +321,29 @@ function iniciarGiro(e) {
     }, 7000); 
 }
 
-// === LÓGICA DO BOTÃO FUGITIVO (TELA 2) ===
+// Lógica do botão fujão que some
 function fugir(e) {
     if (e.cancelable) e.preventDefault();
 
-    btnNao.style.position = 'fixed'; 
+    // Efeito de piscar/sumir temporariamente
+    btnNao.style.opacity = '0';
+    
+    setTimeout(() => {
+        btnNao.style.position = 'fixed'; 
 
-    const maxLargura = window.innerWidth - btnNao.offsetWidth - 20;
-    const maxAltura = window.innerHeight - btnNao.offsetHeight - 20;
+        const maxLargura = window.innerWidth - btnNao.offsetWidth - 20;
+        const maxAltura = window.innerHeight - btnNao.offsetHeight - 20;
 
-    const randomX = Math.max(10, Math.floor(Math.random() * maxLargura));
-    const randomY = Math.max(10, Math.floor(Math.random() * maxAltura));
+        const randomX = Math.max(10, Math.floor(Math.random() * maxLargura));
+        const randomY = Math.max(10, Math.floor(Math.random() * maxAltura));
 
-    btnNao.style.left = randomX + 'px';
-    btnNao.style.top = randomY + 'px';
+        btnNao.style.left = randomX + 'px';
+        btnNao.style.top = randomY + 'px';
+        
+        btnNao.style.opacity = '1'; // Reaparece em outro lugar
+    }, 150);
 
-    escalaSim += 0.3; // O botão SIM vai inflando
+    escalaSim += 0.3; // O botão SIM vai inflando infinitamente
     btnSim.style.transform = `scale(${escalaSim})`;
 }
 
@@ -380,11 +351,14 @@ btnNao.addEventListener('touchstart', fugir, { passive: false });
 btnNao.addEventListener('mouseover', fugir);
 btnNao.addEventListener('click', fugir);
 
-// === ACEITOU O CONVITE (TELA 3) ===
+// Aceitou o convite (Tela final)
 function aceitouEncontro(e) {
     if (e.cancelable) e.preventDefault();
     
-    choverCoracoes(); 
+    // Agora sim, a chuva épica caindo pela tela!
+    choverBaloesECoracoes();
+    // Faz chover de novo logo em seguida para encher a tela
+    setTimeout(choverBaloesECoracoes, 800); 
     
     tela2.style.opacity = "0";
     setTimeout(() => {
@@ -396,7 +370,6 @@ function aceitouEncontro(e) {
 
 btnSim.addEventListener('click', aceitouEncontro);
 btnSim.addEventListener('touchstart', aceitouEncontro, { passive: false });
-
 </script>
 
 </body>
