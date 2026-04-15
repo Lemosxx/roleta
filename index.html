@@ -1,143 +1,68 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Um Convite Mágico ❤️</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Um Convite Mágico ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background: #1a0a0a; font-family: 'Fredoka', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; width: 100vw; overflow: hidden; }
+        
+        .carousel-card {
+            background: #fffdf5; border: 6px solid #d4af37; border-radius: 30px;
+            padding: 25px 15px; box-shadow: 0 0 50px rgba(212, 175, 55, 0.3);
+            width: 92%; max-width: 380px; text-align: center; position: relative; z-index: 10;
+        }
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+        /* Luzes piscantes */
+        .carousel-card::before {
+            content: ''; position: absolute; top: -12px; left: -12px; right: -12px; bottom: -12px;
+            border: 4px dotted #ffd700; border-radius: 35px; animation: lights 1s infinite; pointer-events: none;
+        }
+        @keyframes lights { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        #tela2, #tela3 { display: none; }
+        h2 { font-family: 'Playfair Display', serif; color: #a31d1d; font-size: 1.7rem; text-transform: uppercase; margin-bottom: 10px; }
+        
+        .roleta-container { position: relative; width: 260px; height: 260px; margin: 15px auto; }
+        .ponteiro { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 35px; z-index: 20; }
+        canvas { border-radius: 50%; border: 6px solid #d4af37; width: 100%; height: 100%; transition: transform 0.1s linear; }
 
-body {
-    /* Fundo Escuro para as luzes brilharem, como um parque à noite */
-    background: #1a0a0a; 
-    font-family: 'Fredoka', sans-serif;
-    display: flex; justify-content: center; align-items: center;
-    min-height: 100vh; width: 100vw; overflow: hidden;
-}
+        .gif-box { width: 100%; height: 200px; margin: 10px 0; border-radius: 15px; overflow: hidden; border: 3px solid #d4af37; background: #fff; }
+        .gif-box img { width: 100%; height: 100%; object-fit: contain; }
 
-/* Moldura do Carrossel com Luzes */
-.carousel-card {
-    background: #fffdf5; /* Cor creme vintage */
-    border: 8px solid #d4af37; /* Borda Dourada */
-    border-radius: 30px;
-    padding: 30px 20px;
-    box-shadow: 0 0 50px rgba(212, 175, 55, 0.3), inset 0 0 20px rgba(0,0,0,0.1);
-    width: 90%; max-width: 380px;
-    text-align: center;
-    position: relative;
-    z-index: 10;
-}
+        .area-botoes { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 15px; min-height: 120px; position: relative; width: 100%; }
+        button { border: 3px solid #d4af37; padding: 15px; font-size: 1.1rem; font-weight: bold; font-family: inherit; border-radius: 15px; cursor: pointer; text-transform: uppercase; width: 85%; }
+        
+        #girar { background: #a31d1d; color: #fff; box-shadow: 0 5px 0 #6d1010; }
+        #btn-sim { background: #a31d1d; color: white; transition: transform 0.2s ease; z-index: 100; }
+        #btn-nao { background: #fff; color: #a31d1d; transition: opacity 0.3s; }
 
-/* Efeito de Luzes Piscantes ao redor */
-.carousel-card::before {
-    content: '';
-    position: absolute;
-    top: -15px; left: -15px; right: -15px; bottom: -15px;
-    border: 4px dotted #ffd700;
-    border-radius: 40px;
-    animation: lights 1s infinite;
-}
+        .deboche { position: fixed; color: #ffd700; font-weight: bold; font-size: 1.2rem; pointer-events: none; z-index: 1000; text-shadow: 2px 2px #000; animation: floatUp 1s ease-out forwards; }
+        @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-80px); opacity: 0; } }
 
-@keyframes lights {
-    0% { opacity: 1; filter: drop-shadow(0 0 5px #fff); }
-    50% { opacity: 0.5; filter: drop-shadow(0 0 15px #ffd700); }
-    100% { opacity: 1; filter: drop-shadow(0 0 5px #fff); }
-}
-
-#tela2, #tela3 { display: none; opacity: 0; }
-
-h2 { 
-    font-family: 'Playfair Display', serif;
-    color: #a31d1d; /* Vermelho Carrossel */
-    font-size: 1.8rem;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.gif-box { 
-    width: 100%; height: 220px; 
-    margin: 15px 0; border-radius: 15px; 
-    overflow: hidden; border: 3px solid #d4af37;
-    background: #fff;
-}
-.gif-box img { width: 100%; height: 100%; object-fit: contain; }
-
-.area-botoes { 
-    display: flex; flex-direction: column; align-items: center; 
-    gap: 15px; margin-top: 20px; min-height: 140px; position: relative;
-}
-
-button { 
-    border: 3px solid #d4af37; padding: 15px 30px; 
-    font-size: 1.2rem; font-weight: bold; font-family: inherit; 
-    border-radius: 15px; cursor: pointer;
-    text-transform: uppercase;
-}
-
-#girar { 
-    background: #a31d1d; color: #fff; width: 85%;
-    box-shadow: 0 5px 0 #6d1010;
-    transition: all 0.1s;
-}
-#girar:active { transform: translateY(4px); box-shadow: 0 1px 0 #6d1010; }
-
-#btn-sim { 
-    background: #a31d1d; color: white; width: 180px;
-    box-shadow: 0 0 15px rgba(163, 29, 29, 0.4);
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-#btn-nao { 
-    background: #fff; color: #a31d1d; width: 150px;
-}
-
-/* Texto de deboche flutuante */
-.deboche {
-    position: fixed; color: #ffd700; font-weight: bold; 
-    font-size: 1.3rem; pointer-events: none; z-index: 1000;
-    text-shadow: 2px 2px #000;
-    animation: floatUp 1.5s ease-out forwards;
-}
-
-@keyframes floatUp {
-    0% { transform: translateY(0) scale(1); opacity: 1; }
-    100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
-}
-
-.detalhes { 
-    text-align: left; background: #fff5e6; 
-    padding: 20px; border-radius: 15px; 
-    border: 2px dashed #d4af37; margin-top: 15px; 
-}
-.detalhes h3 { color: #a31d1d; margin-bottom: 5px; font-size: 1.1rem; }
-
-@keyframes chuva { 
-    0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; } 
-    100% { transform: translateY(110vh) rotate(20deg); opacity: 0; } 
-}
-</style>
+        .detalhes { text-align: left; background: #fff5e6; padding: 15px; border-radius: 15px; border: 2px dashed #d4af37; margin-top: 10px; }
+        .detalhes h3 { color: #a31d1d; font-size: 1rem; margin-bottom: 3px; }
+        @keyframes chuva { 0% { transform: translateY(-10vh); opacity: 1; } 100% { transform: translateY(110vh); opacity: 0; } }
+    </style>
 </head>
-
 <body>
 
 <div class="carousel-card" id="tela1">
     <h2>🎡 A Grande Sorte 🎡</h2>
-    <div class="roleta-container" style="position:relative; width:250px; height:250px; margin:20px auto;">
-        <div style="position:absolute; top:-25px; left:50%; transform:translateX(-50%); font-size:40px; z-index:20;">💎</div>
-        <canvas id="roleta" width="300" height="300" style="border-radius:50%; border:8px solid #d4af37; width:100%; height:100%;"></canvas>
+    <div class="roleta-container">
+        <div class="ponteiro">🔻</div>
+        <canvas id="roleta" width="300" height="300"></canvas>
     </div>
     <button id="girar">Tirar Ticket (1/3) ✨</button>
-    <div id="resultado" style="margin-top:10px; font-weight:bold; color:#a31d1d;"></div>
+    <div id="resultado" style="margin-top:10px; font-weight:bold; color:#a31d1d; min-height: 20px;"></div>
 </div>
 
 <div class="carousel-card" id="tela2">
     <h2>🎟️ Ticket Premiado!</h2>
     <div class="gif-box">
-        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHpueXp6M3RtcGZueXp6M3RtcGZueXp6M3RtcGZueXp6M3RtcGZueSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/MDJ9IbMvLUF2S393U9/giphy.gif" alt="Cat GIF">
+        <img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHpueXp6M3RtcGZueXp6M3RtcGZueXp6M3RtcGZueXp6M3RtcGZueSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/MDJ9IbMvLUF2S393U9/giphy.gif" alt="Cat GIF">
     </div>
     <p>O Carrossel parou no lugar certo! Vamos ao cinema? ❤️</p>
     <div class="area-botoes">
@@ -149,136 +74,164 @@ button {
 <div class="carousel-card" id="tela3">
     <h2>🎠 Nosso Bilhete 🎠</h2>
     <div class="gif-box">
-        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMnVpYjR4eXp6M3RtcGZueXp6M3RtcGZueXp6M3RtcGZueXp6M3RtcGZueSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/c76IJLufpNUMo/giphy.gif" alt="Bear GIF">
+        <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExMnVpYjR4eXp6M3RtcGZueXp6M3RtcGZueXp6M3RtcGZueXp6M3RtcGZueSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/c76IJLufpNUMo/giphy.gif" alt="Bear GIF">
     </div>
     <div class="detalhes">
         <h3>🎬 Atração: O Nosso Grande Beijo</h3>
         <h3>📍 Pavilhão: Shopping Recife</h3>
         <h3>🕒 Sessão: 14:00</h3>
     </div>
-    <p style="margin-top:15px; color:#a31d1d; font-weight:bold;">O show vai começar! ❤️🍿</p>
+    <p style="margin-top:10px; color:#a31d1d; font-weight:bold;">O show vai começar! ❤️🍿</p>
 </div>
 
 <script>
-const canvas = document.getElementById("roleta");
-const ctx = canvas.getContext("2d");
-const btnGirar = document.getElementById("girar");
-const resultado = document.getElementById("resultado");
-const tela1 = document.getElementById("tela1");
-const tela2 = document.getElementById("tela2");
-const tela3 = document.getElementById("tela3");
-const btnSim = document.getElementById("btn-sim");
-const btnNao = document.getElementById("btn-nao");
+    const canvas = document.getElementById("roleta");
+    const ctx = canvas.getContext("2d");
+    const btnGirar = document.getElementById("girar");
+    const resultado = document.getElementById("resultado");
+    const tela1 = document.getElementById("tela1");
+    const tela2 = document.getElementById("tela2");
+    const tela3 = document.getElementById("tela3");
+    const btnSim = document.getElementById("btn-sim");
+    const btnNao = document.getElementById("btn-nao");
 
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-function tocarTique() {
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    const osc = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    osc.connect(g); g.connect(audioCtx.destination);
-    osc.frequency.setValueAtTime(1000, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.05);
-    g.gain.setValueAtTime(0.1, audioCtx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
-    osc.start(); osc.stop(audioCtx.currentTime + 0.05);
-}
-
-const premios = ["Passeio 🎠", "Jantar 🕯️", "Presente 🎁", "Massagem 💆", "Beijos 💋", "Doce 🍬", "CINEMA 🎬"];
-const cores = ["#a31d1d", "#d4af37", "#a31d1d", "#d4af37", "#a31d1d", "#d4af37", "#a31d1d"];
-const total = premios.length;
-const fatia = 360 / total;
-
-let rotacao = 0, girando = false, tentativas = 0, escalaSim = 1;
-
-function desenhar() {
-    ctx.clearRect(0,0,300,300);
-    for(let i=0; i<total; i++) {
-        const ang = i * (Math.PI*2/total);
-        ctx.beginPath(); ctx.fillStyle = cores[i%cores.length];
-        ctx.moveTo(150,150); ctx.arc(150,150,145,ang,ang+(Math.PI*2/total)); ctx.fill();
-        ctx.save(); ctx.translate(150,150); ctx.rotate(ang+(Math.PI*2/total)/2);
-        ctx.fillStyle = "#fff"; ctx.font = "bold 16px 'Playfair Display'";
-        ctx.textAlign = "right"; ctx.fillText(premios[i], 130, 5); ctx.restore();
+    // Audio Context corrigido para iOS
+    let audioCtx;
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
     }
-}
-desenhar();
 
-function chover() {
-    for(let i=0; i<60; i++) {
-        const e = document.createElement("div");
-        e.innerText = ['✨','❤️','🎟️','🍿','🎠'][Math.floor(Math.random()*5)];
-        e.style.position = "fixed"; e.style.top = "-50px"; e.style.left = Math.random()*100+"vw";
-        e.style.fontSize = "30px"; e.style.zIndex = "2000";
-        e.style.animation = `chuva ${Math.random()*3+2}s linear forwards`;
-        document.body.appendChild(e); setTimeout(()=>e.remove(), 5000);
+    function tocarTique() {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        osc.connect(g); g.connect(audioCtx.destination);
+        osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.04);
+        g.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.04);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.04);
     }
-}
 
-function iniciarGiro() {
-    if(girando) return; girando = true;
-    btnGirar.style.opacity = "0.5"; resultado.innerText = "Aguarde a sorte...";
-    const voltas = 10 + (tentativas*2);
-    const alvo = (total - 6) * fatia + 270 - (fatia/2);
-    const final = rotacao + (360 * voltas) + (alvo - (rotacao % 360));
-    const inicio = performance.now();
-    let ultimoTique = 0;
+    const premios = ["Passeio", "Jantar", "Presente", "Massagem", "Beijos", "Doce", "CINEMA"];
+    const cores = ["#a31d1d", "#d4af37", "#a31d1d", "#d4af37", "#a31d1d", "#d4af37", "#a31d1d"];
+    const total = premios.length;
+    const fatia = 360 / total;
 
-    function animar(agora) {
-        let prog = Math.min((agora - inicio)/6000, 1);
-        let ease = 1 - Math.pow(1 - prog, 4);
-        let atual = rotacao + (final - rotacao) * ease;
-        canvas.style.transform = `rotate(${atual}deg)`;
-        if(Math.floor(atual/fatia) > ultimoTique) { tocarTique(); ultimoTique = Math.floor(atual/fatia); }
-        if(prog < 1) requestAnimationFrame(animar);
-        else { rotacao = atual; finalizar(); }
+    let rotacao = 0, girando = false, tentativas = 0, escalaSim = 1;
+
+    function desenhar() {
+        ctx.clearRect(0,0,300,300);
+        for(let i=0; i<total; i++) {
+            const ang = i * (Math.PI*2/total);
+            ctx.beginPath(); ctx.fillStyle = cores[i%cores.length];
+            ctx.moveTo(150,150); ctx.arc(150,150,145,ang,ang+(Math.PI*2/total)); ctx.fill();
+            ctx.save(); ctx.translate(150,150); ctx.rotate(ang+(Math.PI*2/total)/2);
+            ctx.fillStyle = "#fff"; ctx.font = "bold 16px 'Playfair Display'";
+            ctx.textAlign = "right"; ctx.fillText(premios[i], 130, 5); ctx.restore();
+        }
     }
-    requestAnimationFrame(animar);
-}
+    desenhar();
 
-function finalizar() {
-    const f = ["🎉 DEU CINEMA!", "🤔 O Carrossel travou no Cinema!", "✨ Destino Final: CINEMA! ❤️"];
-    resultado.innerText = f[tentativas];
-    tentativas++;
-    if(tentativas < 3) {
-        setTimeout(() => { btnGirar.innerText = `Tentar de novo (${tentativas+1}/3)`; btnGirar.style.opacity = "1"; girando = false; }, 1500);
-    } else {
-        setTimeout(() => { tela1.style.display = "none"; tela2.style.display = "block"; setTimeout(()=>tela2.style.opacity="1", 50); }, 2000);
+    function iniciarGiro() {
+        if(girando) return;
+        initAudio();
+        girando = true;
+        btnGirar.style.opacity = "0.5";
+        resultado.innerText = "Aguarde a sorte...";
+        
+        const voltas = 10 + (tentativas * 2);
+        const alvo = (total - 6) * fatia + 270 - (fatia/2);
+        const final = rotacao + (360 * voltas) + (alvo - (rotacao % 360));
+        const inicio = performance.now();
+        let ultimoTique = 0;
+
+        function animar(agora) {
+            let prog = Math.min((agora - inicio)/5000, 1);
+            let ease = 1 - Math.pow(1 - prog, 4);
+            let atual = rotacao + (final - rotacao) * ease;
+            canvas.style.transform = `rotate(${atual}deg)`;
+            
+            if(Math.floor(atual/fatia) > ultimoTique) { 
+                tocarTique(); 
+                ultimoTique = Math.floor(atual/fatia); 
+            }
+            
+            if(prog < 1) {
+                requestAnimationFrame(animar);
+            } else {
+                rotacao = atual;
+                finalizar();
+            }
+        }
+        requestAnimationFrame(animar);
     }
-}
 
-btnGirar.addEventListener("click", iniciarGiro);
+    function finalizar() {
+        const f = ["🎉 DEU CINEMA!", "🤔 Cinema de novo?!", "✨ É O CINEMA! ❤️"];
+        resultado.innerText = f[tentativas];
+        tentativas++;
+        if(tentativas < 3) {
+            setTimeout(() => { 
+                btnGirar.innerText = `Tentar de novo (${tentativas+1}/3)`; 
+                btnGirar.style.opacity = "1"; 
+                girando = false; 
+            }, 1500);
+        } else {
+            setTimeout(() => { 
+                tela1.style.display = "none"; 
+                tela2.style.display = "block"; 
+                setTimeout(() => tela2.style.opacity = "1", 50); 
+            }, 1500);
+        }
+    }
 
-function fugir(e) {
-    if(e.cancelable) e.preventDefault();
-    
-    const frases = ["QUASE!", "ERROU!", "TENTA OUTRA!", "LENTA DEMAIS!", "OPA!"];
-    const txt = document.createElement("div");
-    txt.className = "deboche";
-    txt.innerText = frases[Math.floor(Math.random()*frases.length)];
-    const x = e.touches ? e.touches[0].clientX : e.clientX;
-    const y = e.touches ? e.touches[0].clientY : e.clientY;
-    txt.style.left = x + "px"; txt.style.top = y + "px";
-    document.body.appendChild(txt);
-    setTimeout(() => txt.remove(), 1500);
+    btnGirar.addEventListener("click", iniciarGiro);
 
-    btnNao.style.position = 'fixed';
-    btnNao.style.left = Math.max(20, Math.random()*(window.innerWidth-120)) + 'px';
-    btnNao.style.top = Math.max(20, Math.random()*(window.innerHeight-60)) + 'px';
-    
-    btnNao.style.opacity = '0';
-    setTimeout(() => { btnNao.style.opacity = '1'; }, 600);
+    function fugir(e) {
+        if(e.cancelable) e.preventDefault();
+        
+        const frases = ["QUASE!", "ERROU!", "TENTA OUTRA!", "LENTA!", "OPA!"];
+        const txt = document.createElement("div");
+        txt.className = "deboche";
+        txt.innerText = frases[Math.floor(Math.random()*frases.length)];
+        const x = e.touches ? e.touches[0].clientX : e.clientX;
+        const y = e.touches ? e.touches[0].clientY : e.clientY;
+        txt.style.left = x + "px"; txt.style.top = y + "px";
+        document.body.appendChild(txt);
+        setTimeout(() => txt.remove(), 1000);
 
-    escalaSim += 0.5; btnSim.style.transform = `scale(${escalaSim})`;
-}
+        btnNao.style.position = 'fixed';
+        btnNao.style.left = Math.max(20, Math.random()*(window.innerWidth-120)) + 'px';
+        btnNao.style.top = Math.max(20, Math.random()*(window.innerHeight-60)) + 'px';
+        
+        btnNao.style.opacity = '0';
+        setTimeout(() => { btnNao.style.opacity = '1'; }, 400);
 
-btnNao.addEventListener('touchstart', fugir);
-btnNao.addEventListener('mouseover', fugir);
+        escalaSim += 0.4; 
+        btnSim.style.transform = `scale(${escalaSim})`;
+    }
 
-btnSim.addEventListener('click', () => {
-    chover(); tela2.style.display = "none"; tela3.style.display = "block"; setTimeout(()=>tela3.style.opacity="1", 50);
-});
+    btnNao.addEventListener('touchstart', fugir, { passive: false });
+    btnNao.addEventListener('click', fugir);
+
+    btnSim.addEventListener('click', () => {
+        tela2.style.display = "none"; 
+        tela3.style.display = "block"; 
+        setTimeout(() => {
+            tela3.style.opacity = "1";
+            // Chuva de confetes
+            for(let i=0; i<50; i++) {
+                const e = document.createElement("div");
+                e.innerText = ['✨','❤️','🎟️'][Math.floor(Math.random()*3)];
+                e.style.position = "fixed"; e.style.top = "-50px"; e.style.left = Math.random()*100+"vw";
+                e.style.fontSize = "30px"; e.style.animation = `chuva ${Math.random()*2+2}s linear forwards`;
+                document.body.appendChild(e);
+            }
+        }, 50);
+    });
 </script>
-
 </body>
 </html>
