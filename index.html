@@ -8,157 +8,46 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap');
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 body {
     background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
     font-family: 'Fredoka', sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    width: 100vw;
-    overflow: hidden; 
-    color: #4a4a4a;
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; width: 100vw; overflow: hidden; color: #4a4a4a;
 }
 
 .glass-panel {
-    background: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    border-radius: 24px;
-    padding: 30px 20px;
-    box-shadow: 0 10px 30px rgba(255, 105, 135, 0.2);
-    width: 90%;
-    max-width: 380px;
-    text-align: center;
-    transition: opacity 0.5s ease;
-    position: relative;
-    z-index: 10;
+    background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 24px; padding: 30px 20px;
+    box-shadow: 0 10px 30px rgba(255, 105, 135, 0.2); width: 90%; max-width: 380px;
+    text-align: center; transition: opacity 0.5s ease; position: relative; z-index: 10;
 }
 
 #tela2, #tela3 { display: none; opacity: 0; }
-
 h2 { color: #d81b60; margin-top: 0; font-size: 1.8rem; }
 h3 { color: #e91e63; margin-top: 15px; font-size: 1.3rem; }
 p { font-size: 1.1rem; color: #555; margin-top: 10px; font-weight: 500; }
 
-/* === A ROLETA === */
-.roleta-container {
-    position: relative;
-    width: 280px;
-    height: 280px;
-    margin: 20px auto;
-}
+.roleta-container { position: relative; width: 280px; height: 280px; margin: 20px auto; }
+.ponteiro { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 40px; z-index: 20; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
+canvas { border-radius: 50%; box-shadow: 0 10px 25px rgba(216, 27, 96, 0.3); border: 5px solid #fff; width: 100%; height: 100%; }
+img { width: 100%; max-height: 180px; object-fit: contain; margin-top: 10px; border-radius: 15px; pointer-events: none; }
 
-.ponteiro {
-    position: absolute;
-    top: -18px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 40px;
-    z-index: 20;
-    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
-}
+.area-botoes { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 20px; height: 60px; }
+button { border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: bold; font-family: inherit; border-radius: 50px; cursor: pointer; box-shadow: 0 4px 15px rgba(255, 105, 135, 0.3); touch-action: manipulation; }
 
-canvas {
-    border-radius: 50%;
-    box-shadow: 0 10px 25px rgba(216, 27, 96, 0.3);
-    border: 5px solid #fff;
-    width: 100%;
-    height: 100%;
-}
+#girar { background: linear-gradient(45deg, #ff416c, #ff4b2b); color: white; width: 80%; margin-top: 15px; animation: pulse-anim 2s infinite; }
+@keyframes pulse-anim { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+#btn-sim { background: linear-gradient(45deg, #ff416c, #ff4b2b); color: white; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 999; }
+#btn-nao { background: #f8bbd0; color: #880e4f; position: relative; z-index: 50; transition: opacity 0.2s, transform 0.1s; }
 
-img {
-    width: 100%;
-    max-height: 180px;
-    object-fit: contain;
-    margin-top: 10px;
-    border-radius: 15px;
-    pointer-events: none;
-}
-
-/* === BOTÕES === */
-.area-botoes {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-    margin-top: 20px;
-    height: 60px;
-}
-
-button {
-    border: none;
-    padding: 15px 30px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    font-family: inherit;
-    border-radius: 50px;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(255, 105, 135, 0.3);
-    touch-action: manipulation;
-}
-
-#girar {
-    background: linear-gradient(45deg, #ff416c, #ff4b2b);
-    color: white;
-    width: 80%;
-    margin-top: 15px;
-    animation: pulse-anim 2s infinite;
-}
-
-@keyframes pulse-anim {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-}
-
-#btn-sim {
-    background: linear-gradient(45deg, #ff416c, #ff4b2b);
-    color: white;
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    z-index: 999;
-}
-
-#btn-nao {
-    background: #f8bbd0;
-    color: #880e4f;
-    position: relative;
-    z-index: 50;
-    transition: opacity 0.2s, transform 0.1s;
-}
-
-.resultado {
-    margin-top: 20px;
-    font-weight: 600;
-    font-size: 1.2rem;
-    color: #c2185b;
-    min-height: 28px;
-}
-
-.detalhes {
-    text-align: left;
-    background: rgba(255, 255, 255, 0.7);
-    padding: 20px;
-    border-radius: 15px;
-    margin-top: 20px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-}
+.resultado { margin-top: 20px; font-weight: 600; font-size: 1.2rem; color: #c2185b; min-height: 28px; }
+.detalhes { text-align: left; background: rgba(255, 255, 255, 0.7); padding: 20px; border-radius: 15px; margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
 .detalhes h3 { margin-top: 10px; font-size: 1.2rem; color: #ad1457; }
 .detalhes h3:first-child { margin-top: 0; }
 
-/* === ANIMAÇÃO DE QUEDA (BALÕES E CORAÇÕES) === */
-@keyframes chuva {
-    0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(110vh) rotate(20deg); opacity: 0; }
-}
+@keyframes chuva { 0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(110vh) rotate(20deg); opacity: 0; } }
 </style>
 </head>
 
@@ -206,14 +95,32 @@ const tela3 = document.getElementById("tela3");
 const btnSim = document.getElementById("btn-sim");
 const btnNao = document.getElementById("btn-nao");
 
-// Áudios
-const somGiro = new Audio("https://www.soundjay.com/button/sounds/button-09.mp3"); // Tique-taque
+// Áudio final de comemoração
 const somVitoria = new Audio("https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3");
 
-const premios = [
-    "Carrinho Shein 🛍️", "Cupom R$100 💎", "Jantar 🍝",
-    "Massagem 💆", "Dia de Princesa 👑", "Chocolate 🍫", "CINEMA ❤️"
-];
+// Gerador de Tique-Taque do zero (Impossível do iPhone bloquear)
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+const audioCtx = new AudioContext();
+
+function tocarTique() {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    osc.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.05);
+    
+    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+    
+    osc.start(audioCtx.currentTime);
+    osc.stop(audioCtx.currentTime + 0.05);
+}
+
+const premios = ["Carrinho Shein 🛍️", "Cupom R$100 💎", "Jantar 🍝", "Massagem 💆", "Dia de Princesa 👑", "Chocolate 🍫", "CINEMA ❤️"];
 const cores = ["#ff9a9e", "#fecfef", "#fbc2eb", "#f48fb1", "#ffb199", "#ff0844", "#ffb199"];
 const total = premios.length;
 const angulo = (2 * Math.PI) / total;
@@ -222,7 +129,6 @@ let rotacaoAtual = 0;
 let girando = false;
 let escalaSim = 1;
 
-// Desenhar roleta
 function desenhar() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     for (let i = 0; i < total; i++) {
@@ -248,7 +154,6 @@ function desenhar() {
 }
 desenhar();
 
-// Efeito de Chuva Final (Balões e Corações caindo)
 function choverBaloesECoracoes() {
     const emojis = ['🎈', '❤️', '🎈', '💖', '🎈', '💕', '✨', '🍿'];
     for (let i = 0; i < 70; i++) {
@@ -265,27 +170,23 @@ function choverBaloesECoracoes() {
     }
 }
 
-// Lógica de Girar
-btnGirar.addEventListener("touchstart", iniciarGiro, { passive: false });
-btnGirar.addEventListener("click", iniciarGiro);
-
+// INICIAR GIRO
 function iniciarGiro(e) {
     if (e.cancelable) e.preventDefault();
     if (girando) return;
     girando = true;
 
+    // Desbloqueia o áudio final no momento exato do clique
+    somVitoria.play().then(() => somVitoria.pause()).catch(()=>{});
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+
     btnGirar.style.animation = "none"; 
     resultado.innerText = "Cruzando os dedos... 🫣";
 
-    // Libera o áudio no iOS no primeiro clique
-    somGiro.play().catch(()=>{});
-    somGiro.pause();
-
-    // Loop do tique-taque e vibração (Vibração só pega no Android)
+    // Dispara os "tiques" pelo gerador embutido
     let tempoDecorrido = 0;
     let intervaloGiro = setInterval(() => {
-        somGiro.currentTime = 0;
-        somGiro.play().catch(()=>{});
+        tocarTique();
         if (navigator.vibrate) navigator.vibrate(10); 
         tempoDecorrido += 200;
         if (tempoDecorrido > 6500) clearInterval(intervaloGiro); 
@@ -303,11 +204,12 @@ function iniciarGiro(e) {
     canvas.style.transform = `rotate(${rotacaoAtual}deg)`;
 
     setTimeout(() => {
+        somVitoria.currentTime = 0;
         somVitoria.play().catch(()=>{});
-        if (navigator.vibrate) navigator.vibrate([200, 100, 200]); // Android
+        if (navigator.vibrate) navigator.vibrate([200, 100, 200]); 
         
         resultado.innerText = "🎉 AÍ SIM!!!";
-        choverBaloesECoracoes(); // Confetes provisórios
+        choverBaloesECoracoes(); 
         
         setTimeout(() => {
             tela1.style.opacity = "0";
@@ -321,11 +223,13 @@ function iniciarGiro(e) {
     }, 7000); 
 }
 
-// Lógica do botão fujão que some
+btnGirar.addEventListener("touchstart", iniciarGiro, { passive: false });
+btnGirar.addEventListener("click", iniciarGiro);
+
+// BOTÃO NÃO QUE FOGE E PISCA
 function fugir(e) {
     if (e.cancelable) e.preventDefault();
 
-    // Efeito de piscar/sumir temporariamente
     btnNao.style.opacity = '0';
     
     setTimeout(() => {
@@ -340,10 +244,10 @@ function fugir(e) {
         btnNao.style.left = randomX + 'px';
         btnNao.style.top = randomY + 'px';
         
-        btnNao.style.opacity = '1'; // Reaparece em outro lugar
+        btnNao.style.opacity = '1'; 
     }, 150);
 
-    escalaSim += 0.3; // O botão SIM vai inflando infinitamente
+    escalaSim += 0.3; 
     btnSim.style.transform = `scale(${escalaSim})`;
 }
 
@@ -351,13 +255,11 @@ btnNao.addEventListener('touchstart', fugir, { passive: false });
 btnNao.addEventListener('mouseover', fugir);
 btnNao.addEventListener('click', fugir);
 
-// Aceitou o convite (Tela final)
+// ACEITOU (CHUVA DE BALÕES)
 function aceitouEncontro(e) {
     if (e.cancelable) e.preventDefault();
     
-    // Agora sim, a chuva épica caindo pela tela!
     choverBaloesECoracoes();
-    // Faz chover de novo logo em seguida para encher a tela
     setTimeout(choverBaloesECoracoes, 800); 
     
     tela2.style.opacity = "0";
