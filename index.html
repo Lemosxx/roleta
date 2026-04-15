@@ -6,148 +6,123 @@
 <title>Surpresa pra Você ❤️</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap');
 
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 body {
-    /* Fundo um pouco mais escuro para os LEDs e o 3D brilharem mais */
-    background: radial-gradient(circle at center, #ff9a9e 0%, #d8697b 100%);
+    /* Fundo fofo em tons pastel */
+    background: linear-gradient(135deg, #ffc3a0 0%, #ffafbd 100%);
     font-family: 'Fredoka', sans-serif;
     display: flex; justify-content: center; align-items: center;
     min-height: 100vh; width: 100vw; overflow: hidden; color: #4a4a4a;
 }
 
-/* Painel 3D e LEDs */
+/* Painel estilo bolha/nuvem */
 .glass-panel {
-    background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-    border: 3px solid rgba(255, 255, 255, 0.9); border-radius: 30px; padding: 30px 20px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2), inset 0 0 15px rgba(255,255,255,0.5); 
+    background: rgba(255, 255, 255, 0.75); 
+    backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+    border: 4px solid rgba(255, 255, 255, 0.9); 
+    border-radius: 40px; padding: 30px 20px;
+    box-shadow: 0 15px 35px rgba(255, 154, 162, 0.3), inset 0 0 20px rgba(255,255,255,0.8); 
     width: 92%; max-width: 400px;
     text-align: center; transition: opacity 0.5s ease; position: relative; z-index: 10;
 }
 
-/* Sistema de LEDs piscantes na borda */
-.led-container { position: absolute; top: -8px; left: -8px; right: -8px; bottom: -8px; pointer-events: none; z-index: -1; }
-.led {
-    position: absolute; width: 12px; height: 12px; background: #ffd700; border-radius: 50%;
-    box-shadow: 0 0 10px #ffd700, 0 0 20px #fff; animation: piscar 1s infinite alternate;
-}
-.led:nth-child(1) { top: 15px; left: 15px; animation-delay: 0s; }
-.led:nth-child(2) { top: -6px; left: 50%; transform: translateX(-50%); animation-delay: 0.2s; }
-.led:nth-child(3) { top: 15px; right: 15px; animation-delay: 0.4s; }
-.led:nth-child(4) { top: 50%; right: -6px; transform: translateY(-50%); animation-delay: 0.6s; }
-.led:nth-child(5) { bottom: 15px; right: 15px; animation-delay: 0.8s; }
-.led:nth-child(6) { bottom: -6px; left: 50%; transform: translateX(-50%); animation-delay: 1.0s; }
-.led:nth-child(7) { bottom: 15px; left: 15px; animation-delay: 1.2s; }
-.led:nth-child(8) { top: 50%; left: -6px; transform: translateY(-50%); animation-delay: 1.4s; }
-
-@keyframes piscar { 0% { opacity: 0.3; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1.2); } }
-
 #tela2, #tela3 { display: none; opacity: 0; }
-h2 { color: #d81b60; margin-top: 0; font-size: 1.8rem; text-shadow: 1px 1px 0px white; }
 
-/* ROLETA 3D METÁLICA */
-.roleta-wrapper {
-    position: relative; width: 280px; height: 280px; margin: 20px auto;
-    /* Borda metálica dourada */
-    background: conic-gradient(from 180deg at 50% 50%, #b89c31 0%, #d4af37 20%, #f7e08b 40%, #d4af37 60%, #b89c31 80%, #d4af37 100%);
-    border-radius: 50%; padding: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+h2 { color: #d81b60; margin-top: 0; font-size: 1.8rem; text-shadow: 2px 2px 0px white; }
+p { font-size: 1.15rem; color: #880e4f; margin-top: 10px; font-weight: 500; }
+
+/* ROLETA FOFA */
+.roleta-container { position: relative; width: 280px; height: 280px; margin: 20px auto; }
+.ponteiro { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 45px; z-index: 20; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); }
+canvas { 
+    border-radius: 50%; 
+    border: 8px solid #fff; 
+    width: 100%; height: 100%; 
+    box-shadow: 0 10px 20px rgba(255, 154, 162, 0.5);
 }
 
-.roleta-center {
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-    width: 40px; height: 40px; border: 2px solid #a37c22;
-    background: radial-gradient(circle at 30% 30%, #fff 0%, #d4af37 40%, #b89c31 100%);
-    border-radius: 50%; z-index: 25; box-shadow: 0 4px 8px rgba(0,0,0,0.4);
-}
-
-.ponteiro { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); font-size: 40px; z-index: 30; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
-canvas { border-radius: 50%; box-shadow: inset 0 0 20px rgba(0,0,0,0.4); width: 100%; height: 100%; border: 3px solid #fff; }
-
+/* GIFS GRANDES E SEM CORTAR */
 .gif-box { 
-    width: 100%; height: 250px; margin: 15px 0; border-radius: 20px; 
+    width: 100%; height: 250px; margin: 15px 0; border-radius: 25px; 
     display: flex; justify-content: center; align-items: center;
-    background: rgba(255, 255, 255, 0.4); box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+    background: rgba(255, 255, 255, 0.6); border: 3px dashed #ffb7b2;
 }
 .gif-box img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); }
 
-.area-botoes { display: flex; justify-content: center; align-items: center; gap: 20px; margin-top: 20px; min-height: 80px; position: relative; }
+.area-botoes { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 20px; min-height: 100px; position: relative; }
 
-/* BOTÕES 3D FÍSICOS */
+/* BOTÕES ARREDONDADOS */
 button { 
-    border: none; padding: 15px 25px; font-size: 1.2rem; font-weight: bold; 
+    border: none; padding: 18px 30px; font-size: 1.2rem; font-weight: bold; 
     font-family: inherit; border-radius: 50px; cursor: pointer; 
-    transition: transform 0.1s, box-shadow 0.1s, opacity 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
 }
 
 #girar { 
-    background: linear-gradient(180deg, #ff416c 0%, #d81b60 100%); color: white; width: 80%; 
-    box-shadow: 0 6px 0 #880e4f, 0 10px 15px rgba(0,0,0,0.2); 
-    animation: pulseGirar 2s infinite; 
+    background: linear-gradient(180deg, #ff758c 0%, #ff7eb3 100%); color: white; width: 85%; 
+    box-shadow: 0 6px 0 #d81b60, 0 10px 15px rgba(255, 117, 140, 0.3); 
+    animation: pulse 2s infinite; margin-top: 10px;
 }
-#girar:active { transform: translateY(4px); box-shadow: 0 2px 0 #880e4f, 0 4px 5px rgba(0,0,0,0.2); animation: none; }
-@keyframes pulseGirar { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+#girar:active { transform: translateY(4px); box-shadow: 0 2px 0 #d81b60; animation: none; }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
 
 #btn-sim { 
-    background: linear-gradient(180deg, #ff416c 0%, #d81b60 100%); color: white; z-index: 100; position: relative;
-    box-shadow: 0 6px 0 #880e4f, 0 0 20px rgba(255, 65, 108, 0.4);
+    background: linear-gradient(180deg, #ff758c 0%, #ff7eb3 100%); color: white; z-index: 100; position: relative;
+    box-shadow: 0 6px 0 #d81b60, 0 0 20px rgba(255, 117, 140, 0.5);
 }
-#btn-sim:active { transform: translateY(4px) scale(0.98); box-shadow: 0 2px 0 #880e4f, 0 0 10px rgba(255, 65, 108, 0.4); }
+#btn-sim:active { transform: translateY(4px) scale(0.98); box-shadow: 0 2px 0 #d81b60; }
 
 #btn-nao { 
-    background: linear-gradient(180deg, #ffffff 0%, #f8bbd0 100%); color: #880e4f; z-index: 50; position: relative;
-    box-shadow: 0 6px 0 #c2185b, 0 10px 15px rgba(0,0,0,0.1); border: 1px solid #f48fb1;
+    background: #fff; color: #d81b60; z-index: 50; position: relative;
+    box-shadow: 0 6px 0 #ffb7b2; border: 2px solid #ffb7b2;
 }
 
+/* BALÃO DE DEBOCHE FOFO */
 .deboche {
-    position: fixed; color: #ad1457; font-weight: 600; font-size: 1.2rem;
-    pointer-events: none; animation: subirSumiLento 2s ease-out forwards; z-index: 200;
-    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
+    position: fixed; color: #d81b60; font-weight: 700; font-size: 1.2rem;
+    pointer-events: none; z-index: 200;
+    background: rgba(255, 255, 255, 0.9); padding: 10px 18px; 
+    border-radius: 20px; border: 3px solid #ffb7b2;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    animation: subirSumiLento 2s ease-out forwards;
 }
 
 @keyframes subirSumiLento {
-    0% { opacity: 0; transform: translateY(0) scale(0.8); }
-    20% { opacity: 1; transform: translateY(-20px) scale(1.1); }
-    80% { opacity: 1; transform: translateY(-80px) scale(1.2); }
-    100% { opacity: 0; transform: translateY(-120px) scale(1.3); }
+    0% { opacity: 0; transform: translateY(0) scale(0.5); }
+    15% { opacity: 1; transform: translateY(-30px) scale(1.1); }
+    80% { opacity: 1; transform: translateY(-70px) scale(1); }
+    100% { opacity: 0; transform: translateY(-100px) scale(0.8); }
 }
 
-.resultado { margin-top: 15px; font-weight: 600; color: #c2185b; min-height: 24px; text-shadow: 1px 1px 0px rgba(255,255,255,0.5); }
-.detalhes { text-align: left; background: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 20px; margin-top: 15px; box-shadow: inset 0 0 10px rgba(0,0,0,0.05); border: 2px dashed #f48fb1;}
+.resultado { margin-top: 15px; font-weight: 700; color: #d81b60; min-height: 24px; font-size: 1.3rem; }
+.detalhes { text-align: left; background: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 25px; margin-top: 15px; border: 3px dashed #ffb7b2; }
 .detalhes h3 { color: #d81b60; margin-bottom: 5px; font-size: 1.15rem; }
 
-@keyframes chuva { 0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(110vh) rotate(20deg); opacity: 0; } }
+@keyframes chuvaLenta { 0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(110vh) rotate(360deg); opacity: 0; } }
 </style>
 </head>
 
 <body>
 
 <div class="glass-panel" id="tela1">
-    <div class="led-container">
-        <div class="led"></div><div class="led"></div><div class="led"></div><div class="led"></div>
-        <div class="led"></div><div class="led"></div><div class="led"></div><div class="led"></div>
-    </div>
     <h2>🎡 Roleta do Amor 🎡</h2>
     
-    <div class="roleta-wrapper">
-        <div class="roleta-center"></div>
-        <div class="ponteiro">🔻</div>
+    <div class="roleta-container">
+        <div class="ponteiro">💖</div>
         <canvas id="roleta" width="300" height="300"></canvas>
     </div>
 
-    <button id="girar">Girar (1/3) 💖</button>
+    <button id="girar">Girar (1/3) ✨</button>
     <div class="resultado" id="resultado"></div>
 </div>
 
 <div class="glass-panel" id="tela2">
-    <div class="led-container">
-        <div class="led"></div><div class="led"></div><div class="led"></div><div class="led"></div>
-        <div class="led"></div><div class="led"></div><div class="led"></div><div class="led"></div>
-    </div>
     <h2>🎉 DEU CINEMINHA!</h2>
     <div class="gif-box">
-        <img src="https://media1.giphy.com/media/MDJ9IbMvLUF2S393U9/giphy.gif" alt="Cat GIF">
+        <img src="https://media.tenor.com/T_i_X9t568AAAAAi/happy-cat-smile.gif" alt="Cat GIF">
     </div>
     <p>Não tem jeito, é o destino! Aceita ir comigo? ❤️🍿</p>
     <div class="area-botoes">
@@ -157,20 +132,16 @@ button {
 </div>
 
 <div class="glass-panel" id="tela3">
-    <div class="led-container">
-        <div class="led"></div><div class="led"></div><div class="led"></div><div class="led"></div>
-        <div class="led"></div><div class="led"></div><div class="led"></div><div class="led"></div>
-    </div>
     <h2>Nosso encontro 💕</h2>
     <div class="gif-box">
-        <img src="https://media1.giphy.com/media/c76IJLufpNUMo/giphy.gif" alt="Bear GIF">
+        <img src="https://media.tenor.com/On7y968aN8AAAAAi/milk-and-mocha-bear.gif" alt="Bear GIF">
     </div>
     <div class="detalhes">
         <h3>🎬 Filme: O Nosso grande beijo</h3>
         <h3>📍 Local: Shopping Recife</h3>
         <h3>🕒 Horário: 14:00</h3>
     </div>
-    <p style="margin-top:15px; color:#e91e63; font-weight:bold;">Mal posso esperar! ❤️</p>
+    <p style="margin-top:15px; color:#d81b60; font-weight:bold; font-size: 1.3rem;">Mal posso esperar! ❤️</p>
 </div>
 
 <script>
@@ -190,10 +161,10 @@ const frasesDeboche = [
     "Errou feio! 😂", 
     "Tá lenta hein, lenda? 🐢", 
     "Aqui não, amada! 😜", 
-    "Tenta de novo, se conseguir! ✨", 
+    "Tenta de novo! ✨", 
     "Quase... mas não! 🤏", 
-    "O destino quer o SIM! 🙅‍♀️",
-    "Desiste desse botão! 😈"
+    "O destino quer o SIM! 💖",
+    "Pode desistir desse botão! 😈"
 ];
 
 function tocarTique() {
@@ -201,15 +172,16 @@ function tocarTique() {
     const osc = audioCtx.createOscillator();
     const g = audioCtx.createGain();
     osc.connect(g); g.connect(audioCtx.destination);
-    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+    osc.frequency.setValueAtTime(600, audioCtx.currentTime); // Som mais suave
     osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.04);
-    g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    g.gain.setValueAtTime(0.08, audioCtx.currentTime);
     g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.04);
     osc.start(); osc.stop(audioCtx.currentTime + 0.04);
 }
 
+// Paleta em tons pastel fofinhos
 const premios = ["Shein 🛍️", "Cupom 💎", "Jantar 🍝", "Massagem 💆", "Princesa 👑", "Chocolate 🍫", "CINEMINHA ❤️"];
-const cores = ["#ff9a9e", "#fecfef", "#fbc2eb", "#f48fb1", "#ffb199", "#ff0844", "#ffb199"];
+const cores = ["#FFB7B2", "#FFDAC1", "#E2F0CB", "#B5EAD7", "#C7CEEA", "#F1CBFF", "#ff758c"]; // O cinema fica em destaque
 const total = premios.length;
 const fatia = 360 / total;
 
@@ -222,27 +194,31 @@ function desenhar() {
         ctx.beginPath(); ctx.fillStyle = cores[i%cores.length];
         ctx.moveTo(150,150); ctx.arc(150,150,150,ang,ang+(Math.PI*2/total)); ctx.fill();
         ctx.save(); ctx.translate(150,150); ctx.rotate(ang+(Math.PI*2/total)/2);
-        ctx.fillStyle = (i>=5) ? "#fff" : "#4a4a4a"; 
-        ctx.font = "bold 16px Fredoka"; 
-        ctx.textAlign = "right"; ctx.fillText(premios[i], 130, 5); ctx.restore();
+        
+        // Cor do texto baseada na cor do fundo (Cinema é branco, os outros são escuros)
+        ctx.fillStyle = (i === 6) ? "#fff" : "#880e4f"; 
+        ctx.font = "bold 16px 'Fredoka'"; 
+        ctx.textAlign = "right"; ctx.fillText(premios[i], 135, 5); ctx.restore();
     }
 }
 desenhar();
 
-function chover() {
-    for(let i=0; i<80; i++) {
+function choverFestiva() {
+    const emojis = ['❤️', '💖', '🎈', '🍿', '✨', '💕', '🌸', '🌟'];
+    for(let i=0; i<120; i++) {
         const e = document.createElement("div");
-        e.innerText = ['❤️','💖','🎈','🍿','✨','💕'][Math.floor(Math.random()*6)];
+        e.innerText = emojis[Math.floor(Math.random()*emojis.length)];
         e.style.position = "fixed"; e.style.top = "-50px"; e.style.left = Math.random()*100+"vw";
-        e.style.fontSize = Math.random() * 20 + 20 + "px"; e.style.zIndex = "1000";
-        e.style.animation = `chuva ${Math.random()*3+2}s linear forwards`;
-        document.body.appendChild(e); setTimeout(()=>e.remove(), 5000);
+        e.style.fontSize = Math.random() * 25 + 15 + "px"; e.style.zIndex = "1000";
+        // Chuva mais lenta e duradoura
+        e.style.animation = `chuvaLenta ${Math.random()*4+3}s linear forwards`;
+        document.body.appendChild(e); setTimeout(()=>e.remove(), 7000);
     }
 }
 
 function iniciarGiro() {
     if(girando) return; girando = true;
-    btnGirar.style.opacity = "0.5"; resultado.innerText = "Sorteando...";
+    btnGirar.style.opacity = "0.5"; resultado.innerText = "Sorteando... 🫣";
     const voltas = 8 + (tentativas*2);
     const alvo = (total - 6) * fatia + 270 - (fatia/2);
     const final = rotacao + (360 * voltas) + (alvo - (rotacao % 360));
@@ -266,7 +242,7 @@ function finalizar() {
     resultado.innerText = f[tentativas];
     tentativas++;
     if(tentativas < 3) {
-        setTimeout(() => { btnGirar.innerText = `Girar (${tentativas+1}/3) 💖`; btnGirar.style.opacity = "1"; girando = false; }, 1500);
+        setTimeout(() => { btnGirar.innerText = `Girar (${tentativas+1}/3) ✨`; btnGirar.style.opacity = "1"; girando = false; }, 1500);
     } else {
         setTimeout(() => { tela1.style.display = "none"; tela2.style.display = "block"; setTimeout(()=>tela2.style.opacity="1", 50); }, 2000);
     }
@@ -277,30 +253,34 @@ btnGirar.addEventListener("click", iniciarGiro);
 function fugir(e) {
     if(e.cancelable) e.preventDefault();
     
+    // Tira onda (Balão de deboche)
     const texto = document.createElement("div");
     texto.className = "deboche";
     texto.innerText = frasesDeboche[Math.floor(Math.random()*frasesDeboche.length)];
     
     const posX = e.touches ? e.touches[0].clientX : e.clientX;
     const posY = e.touches ? e.touches[0].clientY : e.clientY;
-    texto.style.left = posX - 50 + "px";
-    texto.style.top = posY + "px";
+    texto.style.left = (posX - 60) + "px";
+    texto.style.top = (posY - 40) + "px";
     
     document.body.appendChild(texto);
+    // Fica na tela por 2 segundos
     setTimeout(() => texto.remove(), 2000);
 
+    // Some por 0.8 segundos (um "gelo" maior)
     btnNao.style.opacity = '0';
     btnNao.style.pointerEvents = 'none';
 
     setTimeout(() => {
         btnNao.style.position = 'fixed';
-        btnNao.style.left = Math.max(20, Math.random()*(window.innerWidth-100)) + 'px';
-        btnNao.style.top = Math.max(20, Math.random()*(window.innerHeight-50)) + 'px';
+        btnNao.style.left = Math.max(20, Math.random()*(window.innerWidth-120)) + 'px';
+        btnNao.style.top = Math.max(20, Math.random()*(window.innerHeight-60)) + 'px';
         btnNao.style.opacity = '1';
         btnNao.style.pointerEvents = 'auto';
     }, 800); 
 
-    escalaSim += 0.5; 
+    // Aumenta o Sim
+    escalaSim += 0.45; 
     btnSim.style.transform = `scale(${escalaSim})`;
 }
 
@@ -308,7 +288,8 @@ btnNao.addEventListener('touchstart', fugir, {passive: false});
 btnNao.addEventListener('mouseover', fugir);
 
 btnSim.addEventListener('click', () => {
-    chover(); 
+    choverFestiva(); 
+    setTimeout(choverFestiva, 1500); // Chuva dupla pra comemorar
     tela2.style.display = "none"; 
     tela3.style.display = "block"; 
     setTimeout(()=>tela3.style.opacity="1", 50);
