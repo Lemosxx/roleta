@@ -19,39 +19,64 @@ body {
 
 .glass-panel {
     background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-    border: 2px solid rgba(255, 255, 255, 0.8); border-radius: 30px; padding: 30px 20px;
-    box-shadow: 0 10px 30px rgba(255, 105, 135, 0.25); width: 92%; max-width: 380px;
+    border: 2px solid rgba(255, 255, 255, 0.8); border-radius: 30px; padding: 25px 15px;
+    box-shadow: 0 10px 30px rgba(255, 105, 135, 0.25); width: 92%; max-width: 400px;
     text-align: center; transition: opacity 0.5s ease; position: relative; z-index: 10;
 }
 
 #tela2, #tela3 { display: none; opacity: 0; }
 h2 { color: #d81b60; margin-top: 0; font-size: 1.8rem; }
-h3 { color: #e91e63; margin-top: 15px; font-size: 1.3rem; }
-p { font-size: 1.1rem; color: #555; margin-top: 10px; font-weight: 500; }
 
-.roleta-container { position: relative; width: 260px; height: 260px; margin: 25px auto; }
-.ponteiro { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 40px; z-index: 20; }
-canvas { border-radius: 50%; border: 6px solid #fff; width: 100%; height: 100%; }
-
-.gif-box { width: 100%; height: 180px; margin: 15px 0; border-radius: 20px; overflow: hidden; }
-.gif-box img { width: 100%; height: 100%; object-fit: cover; }
+/* GIFS GRANDES E COMPLETOS */
+.gif-box { 
+    width: 100%; 
+    height: 250px; /* Aumentei a altura */
+    margin: 10px 0; 
+    border-radius: 20px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.gif-box img { 
+    max-width: 100%; 
+    max-height: 100%; 
+    object-fit: contain; /* Garante que não corte o desenho */
+}
 
 .area-botoes { 
     display: flex; justify-content: center; align-items: center; 
-    gap: 20px; margin-top: 25px; min-height: 80px; width: 100%;
+    gap: 20px; margin-top: 20px; min-height: 120px; width: 100%;
 }
 
 button { 
     border: none; padding: 16px 28px; font-size: 1.2rem; font-weight: bold; 
     font-family: inherit; border-radius: 50px; cursor: pointer; 
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 #girar { background: linear-gradient(45deg, #ff416c, #ff4b2b); color: white; width: 80%; animation: pulse 2s infinite; }
 @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 
-#btn-sim { background: linear-gradient(45deg, #ff416c, #ff4b2b); color: white; z-index: 100; position: relative; }
-#btn-nao { background: #f8bbd0; color: #880e4f; z-index: 50; position: relative; }
+#btn-sim { 
+    background: linear-gradient(45deg, #ff416c, #ff4b2b); color: white; 
+    z-index: 100; position: relative;
+    box-shadow: 0 0 20px rgba(255, 65, 108, 0.5);
+}
+
+#btn-nao { 
+    background: #f8bbd0; color: #880e4f; z-index: 50; position: relative;
+}
+
+/* FRASES DE DEBOCHE */
+.deboche {
+    position: fixed; color: #d81b60; font-weight: bold; font-size: 1rem;
+    pointer-events: none; animation: subirSumi 0.8s ease-out forwards; z-index: 200;
+}
+
+@keyframes subirSumi {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-50px) scale(1.5); }
+}
 
 .resultado { margin-top: 15px; font-weight: 600; color: #c2185b; min-height: 24px; }
 .detalhes { text-align: left; background: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 20px; margin-top: 15px; }
@@ -64,9 +89,9 @@ button {
 
 <div class="glass-panel" id="tela1">
     <h2>🎡 Roleta do Amor 🎡</h2>
-    <div class="roleta-container">
-        <div class="ponteiro">🔻</div>
-        <canvas id="roleta" width="300" height="300"></canvas>
+    <div class="roleta-container" style="position:relative; width:260px; height:260px; margin:20px auto;">
+        <div class="ponteiro" style="position:absolute; top:-20px; left:50%; transform:translateX(-50%); font-size:40px; z-index:20;">🔻</div>
+        <canvas id="roleta" width="300" height="300" style="border-radius:50%; border:6px solid #fff; width:100%; height:100%;"></canvas>
     </div>
     <button id="girar">Girar (1/3) 💖</button>
     <div class="resultado" id="resultado"></div>
@@ -110,6 +135,8 @@ const btnNao = document.getElementById("btn-nao");
 
 const somVitoria = new Audio("https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3");
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+const frasesDeboche = ["Errou! 😂", "Tá lenta hein? 🐢", "Aqui não! 😜", "Tenta de novo! ✨", "Quase! 🤏", "Nem vem! 🙅‍♀️"];
 
 function tocarTique() {
     if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -183,11 +210,7 @@ function finalizar() {
     if(tentativas < 3) {
         setTimeout(() => { btnGirar.innerText = `Girar (${tentativas+1}/3) 💖`; btnGirar.style.opacity = "1"; girando = false; }, 1500);
     } else {
-        setTimeout(() => { 
-            tela1.style.display = "none"; 
-            tela2.style.display = "block"; 
-            setTimeout(()=>tela2.style.opacity="1", 50); 
-        }, 2000);
+        setTimeout(() => { tela1.style.display = "none"; tela2.style.display = "block"; setTimeout(()=>tela2.style.opacity="1", 50); }, 2000);
     }
 }
 
@@ -196,28 +219,30 @@ btnGirar.addEventListener("click", iniciarGiro);
 function fugir(e) {
     if(e.cancelable) e.preventDefault();
     
-    // Na primeira vez que interage, muda para fixed para poder voar
+    // Tira onda
+    const texto = document.createElement("div");
+    texto.className = "deboche";
+    texto.innerText = frasesDeboche[Math.floor(Math.random()*frasesDeboche.length)];
+    texto.style.left = (e.touches ? e.touches[0].clientX : e.clientX) + "px";
+    texto.style.top = (e.touches ? e.touches[0].clientY : e.clientY) + "px";
+    document.body.appendChild(texto);
+    setTimeout(() => texto.remove(), 800);
+
+    // Foge
     btnNao.style.position = 'fixed';
-    
-    const maxX = window.innerWidth - btnNao.offsetWidth - 20;
-    const maxY = window.innerHeight - btnNao.offsetHeight - 20;
+    btnNao.style.left = Math.max(20, Math.random()*(window.innerWidth-100)) + 'px';
+    btnNao.style.top = Math.max(20, Math.random()*(window.innerHeight-50)) + 'px';
 
-    btnNao.style.left = Math.max(10, Math.random() * maxX) + 'px';
-    btnNao.style.top = Math.max(10, Math.random() * maxY) + 'px';
-
-    escalaSim += 0.4; 
+    // Aumenta o Sim
+    escalaSim += 0.45; 
     btnSim.style.transform = `scale(${escalaSim})`;
 }
 
-// Escuta eventos de mouse e toque
-btnNao.addEventListener('touchstart', fugir, { passive: false });
+btnNao.addEventListener('touchstart', fugir, {passive: false});
 btnNao.addEventListener('mouseover', fugir);
 
 btnSim.addEventListener('click', () => {
-    chover(); 
-    tela2.style.display = "none"; 
-    tela3.style.display = "block"; 
-    setTimeout(()=>tela3.style.opacity="1", 50);
+    chover(); tela2.style.display = "none"; tela3.style.display = "block"; setTimeout(()=>tela3.style.opacity="1", 50);
 });
 </script>
 
