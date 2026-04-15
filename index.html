@@ -18,34 +18,84 @@ body {
 }
 
 .glass-panel {
-    background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 24px; padding: 30px 20px;
-    box-shadow: 0 10px 30px rgba(255, 105, 135, 0.2); width: 90%; max-width: 380px;
-    text-align: center; transition: opacity 0.5s ease; position: relative; z-index: 10;
+    background: rgba(255, 255, 255, 0.6); 
+    backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+    border: 2px solid rgba(255, 255, 255, 0.8); 
+    border-radius: 30px; padding: 30px 20px;
+    box-shadow: 0 15px 35px rgba(255, 105, 135, 0.25); 
+    width: 92%; max-width: 380px;
+    text-align: center; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
+    position: relative; z-index: 10;
 }
 
-#tela2, #tela3 { display: none; opacity: 0; }
-h2 { color: #d81b60; margin-top: 0; font-size: 1.8rem; }
+#tela2, #tela3 { display: none; opacity: 0; transform: translateY(20px); }
+
+h2 { color: #d81b60; margin-top: 0; font-size: 1.8rem; text-shadow: 1px 1px 0px white; }
 h3 { color: #e91e63; margin-top: 15px; font-size: 1.3rem; }
 p { font-size: 1.1rem; color: #555; margin-top: 10px; font-weight: 500; }
 
-.roleta-container { position: relative; width: 280px; height: 280px; margin: 20px auto; }
-.ponteiro { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 40px; z-index: 20; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
-canvas { border-radius: 50%; box-shadow: 0 10px 25px rgba(216, 27, 96, 0.3); border: 5px solid #fff; width: 100%; height: 100%; }
-img { width: 100%; max-height: 180px; object-fit: contain; margin-top: 10px; border-radius: 15px; pointer-events: none; }
+/* ROLETA ESTILIZADA */
+.roleta-container { 
+    position: relative; width: 280px; height: 280px; margin: 25px auto; 
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+}
 
-.area-botoes { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 20px; min-height: 80px; }
-button { border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: bold; font-family: inherit; border-radius: 50px; cursor: pointer; box-shadow: 0 4px 15px rgba(255, 105, 135, 0.3); touch-action: manipulation; }
+.ponteiro { 
+    position: absolute; top: -22px; left: 50%; transform: translateX(-50%); 
+    font-size: 45px; z-index: 20; 
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+    animation: bounce 2s infinite;
+}
 
-#girar { background: linear-gradient(45deg, #ff416c, #ff4b2b); color: white; width: 80%; margin-top: 15px; animation: pulse-anim 2s infinite; }
+@keyframes bounce { 0%, 100% { top: -22px; } 50% { top: -28px; } }
+
+canvas { 
+    border-radius: 50%; border: 8px solid #fff; width: 100%; height: 100%; 
+    transition: transform 0.1s linear;
+}
+
+img { 
+    width: 100%; max-height: 180px; object-fit: contain; 
+    margin: 15px 0; border-radius: 20px; 
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.area-botoes { 
+    display: flex; justify-content: center; align-items: center; 
+    gap: 15px; margin-top: 25px; min-height: 100px; 
+}
+
+button { 
+    border: none; padding: 16px 32px; font-size: 1.2rem; font-weight: bold; 
+    font-family: inherit; border-radius: 50px; cursor: pointer; 
+    box-shadow: 0 6px 20px rgba(255, 75, 43, 0.3); 
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#girar { 
+    background: linear-gradient(45deg, #ff416c, #ff4b2b); color: white; 
+    width: 85%; animation: pulse-anim 2s infinite; 
+}
+
 @keyframes pulse-anim { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-#btn-sim { background: linear-gradient(45deg, #ff416c, #ff4b2b); color: white; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 999; }
-#btn-nao { background: #f8bbd0; color: #880e4f; position: relative; z-index: 50; }
+
+#btn-sim { 
+    background: linear-gradient(45deg, #ff416c, #ff4b2b); color: white; 
+    z-index: 1000;
+}
+
+#btn-nao { 
+    background: #f8bbd0; color: #880e4f; 
+    z-index: 50; position: relative;
+}
 
 .resultado { margin-top: 20px; font-weight: 600; font-size: 1.2rem; color: #c2185b; min-height: 28px; }
-.detalhes { text-align: left; background: rgba(255, 255, 255, 0.7); padding: 20px; border-radius: 15px; margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+
+.detalhes { 
+    text-align: left; background: rgba(255, 255, 255, 0.8); 
+    padding: 20px; border-radius: 20px; margin-top: 20px; 
+}
 .detalhes h3 { margin-top: 10px; font-size: 1.2rem; color: #ad1457; }
-.detalhes h3:first-child { margin-top: 0; }
 
 @keyframes chuva { 0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(110vh) rotate(20deg); opacity: 0; } }
 </style>
@@ -54,7 +104,7 @@ button { border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: bold;
 <body>
 
 <div class="glass-panel" id="tela1">
-    <h2 id="titulo-roleta">🎡 Roleta do Amor 🎡</h2>
+    <h2>🎡 Roleta do Amor 🎡</h2>
     <div class="roleta-container">
         <div class="ponteiro">🔻</div>
         <canvas id="roleta" width="300" height="300"></canvas>
@@ -64,8 +114,8 @@ button { border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: bold;
 </div>
 
 <div class="glass-panel" id="tela2">
-    <h2>🎉 DEU CINEMA!</h2>
-    <img src="https://tenor.com/search/happy-cat-gifs">
+    <h2>🎉 DEU CINEMINHA!</h2>
+    <img src="https://media.tenor.com/T_i_X9t568AAAAAi/happy-cat-smile.gif">
     <p>Não tem jeito, é o destino! Aceita ir comigo? ❤️🍿</p>
     <div class="area-botoes">
         <button id="btn-sim">Sim! ❤️</button>
@@ -75,13 +125,13 @@ button { border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: bold;
 
 <div class="glass-panel" id="tela3">
     <h2>Nosso encontro 💕</h2>
-    <img src="https://i.pinimg.com/originals/cc/08/7a/cc087a0a72dfb9ee31601f672995d86b.gif">
+    <img src="https://media.tenor.com/On7y968aN8AAAAAi/milk-and-mocha-bear.gif">
     <div class="detalhes">
-        <h3>🎬 Filme: O Nosso grande beijo <br><span style="font-size:0.9rem; color:#888;">(ou o que você escolher)</span></h3>
+        <h3>🎬 Filme: O Nosso grande beijo</h3>
         <h3>📍 Local: Shopping Recife</h3>
         <h3>🕒 Horário: 14:00</h3>
     </div>
-    <p style="margin-top:15px; color:#e91e63; font-weight:bold;">Mal posso esperar pra te ver! ❤️</p>
+    <p style="margin-top:15px; color:#e91e63; font-weight:bold;">Mal posso esperar! ❤️</p>
 </div>
 
 <script>
@@ -97,16 +147,10 @@ const btnNao = document.getElementById("btn-nao");
 
 const somVitoria = new Audio("https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3");
 const AudioContext = window.AudioContext || window.webkitAudioContext;
-const audioCtx = new AudioContext();
-
-let tentativas = 0;
-const frasesResultado = [
-    "🎉 VOCÊ GANHOU: CINEMINHA! ❤️🍿",
-    "🤔 Ué... Deu CINEMA de novo! ❤️🍿",
-    "✨ É o destino! CINEMA de novo! ❤️🍿"
-];
+let audioCtx;
 
 function tocarTique() {
+    if(!audioCtx) audioCtx = new AudioContext();
     if (audioCtx.state === 'suspended') audioCtx.resume();
     const osc = audioCtx.createOscillator();
     const gainNode = audioCtx.createGain();
@@ -114,11 +158,10 @@ function tocarTique() {
     gainNode.connect(audioCtx.destination);
     osc.type = 'sine';
     osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.05);
-    gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
-    osc.start(audioCtx.currentTime);
-    osc.stop(audioCtx.currentTime + 0.05);
+    osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.04);
+    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.04);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.04);
 }
 
 const premios = ["Carrinho Shein 🛍️", "Cupom R$100 💎", "Jantar 🍝", "Massagem 💆", "Dia de Princesa 👑", "Chocolate 🍫", "CINEMINHA ❤️"];
@@ -129,6 +172,7 @@ const anguloFatia = 360 / totalPremios;
 let rotacaoAcumulada = 0;
 let girando = false;
 let escalaSim = 1;
+let tentativas = 0;
 
 function desenhar() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -137,31 +181,29 @@ function desenhar() {
         ctx.beginPath();
         ctx.fillStyle = cores[i % cores.length];
         ctx.moveTo(150, 150);
-        ctx.arc(150, 150, 150, ang, ang + (Math.PI * 2 / totalPremios));
+        ctx.arc(150, 150, 145, ang, ang + (Math.PI * 2 / totalPremios));
         ctx.fill();
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = "#ffffff";
-        ctx.stroke();
+        ctx.lineWidth = 3; ctx.strokeStyle = "#ffffff"; ctx.stroke();
+        
         ctx.save();
         ctx.translate(150, 150);
         ctx.rotate(ang + (Math.PI * 2 / totalPremios) / 2);
         ctx.fillStyle = (i === 5 || i === 6) ? "#ffffff" : "#4a4a4a"; 
         ctx.font = "bold 14px 'Fredoka', sans-serif";
         ctx.textAlign = "right";
-        ctx.fillText(premios[i], 135, 5);
+        ctx.fillText(premios[i], 130, 5);
         ctx.restore();
     }
 }
 desenhar();
 
-function choverBaloesECoracoes() {
-    const emojis = ['🎈', '❤️', '💖', '💕', '✨', '🍿'];
+function chover(emojis) {
     for (let i = 0; i < 70; i++) {
         const el = document.createElement("div");
         el.innerText = emojis[Math.floor(Math.random() * emojis.length)];
-        el.style.position = "fixed";
-        el.style.top = "-50px"; el.style.left = Math.random() * 100 + "vw";
-        el.style.fontSize = Math.random() * 20 + 20 + "px";
+        el.style.position = "fixed"; el.style.top = "-50px";
+        el.style.left = Math.random() * 100 + "vw";
+        el.style.fontSize = Math.random() * 25 + 20 + "px";
         el.style.zIndex = "9999";
         el.style.animation = `chuva ${Math.random() * 3 + 2}s linear forwards`;
         document.body.appendChild(el);
@@ -169,49 +211,39 @@ function choverBaloesECoracoes() {
     }
 }
 
-function iniciarGiro(e) {
-    if (e.cancelable) e.preventDefault();
+function iniciarGiro() {
     if (girando) return;
     girando = true;
-
     btnGirar.style.animation = "none";
-    resultado.innerText = "Girando... 🫣";
-    if (audioCtx.state === 'suspended') audioCtx.resume();
+    btnGirar.style.opacity = "0.5";
+    resultado.innerText = "Sorteando... 🫣";
 
-    const voltasExtras = 7 + (tentativas * 2); 
-    const indexCinema = 6; 
+    const voltas = 8 + (tentativas * 2); 
+    const indexAlvo = 6; // Cinema
+    const destinoGraus = (totalPremios - indexAlvo) * anguloFatia + 270 - (anguloFatia / 2);
+    const rotacaoFinal = rotacaoAcumulada + (360 * voltas) + (destinoGraus - (rotacaoAcumulada % 360));
     
-    // CORREÇÃO CRÍTICA: Alinhamento perfeito com o ponteiro superior (270 graus)
-    // O ponteiro do canvas começa em 0 (direita). Para parar no topo, calculamos:
-    const destinoGraus = (totalPremios - indexCinema) * anguloFatia + 270 - (anguloFatia / 2);
-    
-    const rotacaoFinal = (360 * voltasExtras) + destinoGraus;
-    const duracao = 6000; 
-    const tempoInicio = performance.now();
-    
-    let tiqueAnterior = Math.floor(rotacaoAcumulada / anguloFatia);
+    const duracao = 6000;
+    const inicio = performance.now();
+    let ultimoTique = 0;
 
-    function animar(tempoAtual) {
-        let passado = tempoAtual - tempoInicio;
+    function animar(agora) {
+        let passado = agora - inicio;
         let progresso = Math.min(passado / duracao, 1);
-
-        // Ease-out forte para o suspense
         let ease = 1 - Math.pow(1 - progresso, 4);
-        let anguloAtual = rotacaoAcumulada + (rotacaoFinal - rotacaoAcumulada) * ease;
+        let atual = rotacaoAcumulada + (rotacaoFinal - rotacaoAcumulada) * ease;
         
-        canvas.style.transform = `rotate(${anguloAtual}deg)`;
+        canvas.style.transform = `rotate(${atual}deg)`;
 
-        let tiqueAtual = Math.floor(anguloAtual / anguloFatia);
-        if (tiqueAtual > tiqueAnterior) {
+        if (Math.floor(atual / anguloFatia) > ultimoTique) {
             tocarTique();
-            if (navigator.vibrate) navigator.vibrate(10);
-            tiqueAnterior = tiqueAtual;
+            ultimoTique = Math.floor(atual / anguloFatia);
         }
 
         if (progresso < 1) {
             requestAnimationFrame(animar);
         } else {
-            rotacaoAcumulada = anguloAtual % 360; 
+            rotacaoAcumulada = atual;
             finalizar();
         }
     }
@@ -219,15 +251,15 @@ function iniciarGiro(e) {
 }
 
 function finalizar() {
-    somVitoria.currentTime = 0;
     somVitoria.play().catch(()=>{});
-    
-    resultado.innerText = frasesResultado[tentativas];
+    const frases = ["🎉 DEU CINEMINHA! ❤️🍿", "🤔 Ué... Cinema de novo? 😂", "✨ Destino confirmado! ❤️"];
+    resultado.innerText = frases[tentativas];
     tentativas++;
 
     if (tentativas < 3) {
         setTimeout(() => {
             btnGirar.innerText = `Girar (${tentativas + 1}/3) 💖`;
+            btnGirar.style.opacity = "1";
             btnGirar.style.animation = "pulse-anim 2s infinite";
             girando = false;
         }, 1500);
@@ -236,47 +268,41 @@ function finalizar() {
             tela1.style.opacity = "0";
             setTimeout(() => {
                 tela1.style.display = "none";
-                tela2.style.display = "block";
-                setTimeout(() => tela2.style.opacity = "1", 50); 
+                tela2.style.display = "flex";
+                tela2.style.flexDirection = "column";
+                setTimeout(() => { tela2.style.opacity = "1"; tela2.style.transform = "translateY(0)"; }, 50); 
             }, 500);
         }, 2000);
     }
 }
 
-btnGirar.addEventListener("touchstart", iniciarGiro, { passive: false });
 btnGirar.addEventListener("click", iniciarGiro);
 
 function fugir(e) {
     if (e.cancelable) e.preventDefault();
-
-    const maxX = window.innerWidth - btnNao.offsetWidth - 20;
-    const maxY = window.innerHeight - btnNao.offsetHeight - 20;
-
+    const maxX = window.innerWidth - btnNao.offsetWidth - 30;
+    const maxY = window.innerHeight - btnNao.offsetHeight - 30;
+    
     btnNao.style.position = 'fixed';
-    btnNao.style.left = Math.max(10, Math.random() * maxX) + 'px';
-    btnNao.style.top = Math.max(10, Math.random() * maxY) + 'px';
+    btnNao.style.left = Math.max(15, Math.random() * maxX) + 'px';
+    btnNao.style.top = Math.max(15, Math.random() * maxY) + 'px';
 
-    escalaSim += 0.35; 
+    escalaSim += 0.4; 
     btnSim.style.transform = `scale(${escalaSim})`;
 }
 
-btnNao.addEventListener('touchstart', fugir, { passive: false });
+btnNao.addEventListener('touchstart', fugir);
 btnNao.addEventListener('mouseover', fugir);
-btnNao.addEventListener('click', fugir);
 
-function aceitouEncontro(e) {
-    if (e.cancelable) e.preventDefault();
-    choverBaloesECoracoes();
+btnSim.addEventListener('click', () => {
+    chover(['🎈', '❤️', '💖', '🍿']);
     tela2.style.opacity = "0";
     setTimeout(() => {
         tela2.style.display = "none";
         tela3.style.display = "block";
-        setTimeout(() => tela3.style.opacity = "1", 50); 
+        setTimeout(() => { tela3.style.opacity = "1"; tela3.style.transform = "translateY(0)"; }, 50); 
     }, 500);
-}
-
-btnSim.addEventListener('click', aceitouEncontro);
-btnSim.addEventListener('touchstart', aceitouEncontro, { passive: false });
+});
 </script>
 
 </body>
