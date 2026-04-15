@@ -98,7 +98,7 @@ const btnNao = document.getElementById("btn-nao");
 // Áudio final de comemoração
 const somVitoria = new Audio("https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3");
 
-// Gerador de Tique-Taque do zero (Impossível do iPhone bloquear)
+// Gerador de Tique-Taque do zero (Sincronizado perfeitamente com a física)
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 const audioCtx = new AudioContext();
 
@@ -123,7 +123,7 @@ function tocarTique() {
 const premios = ["Carrinho Shein 🛍️", "Cupom R$100 💎", "Jantar 🍝", "Massagem 💆", "Dia de Princesa 👑", "Chocolate 🍫", "CINEMA ❤️"];
 const cores = ["#ff9a9e", "#fecfef", "#fbc2eb", "#f48fb1", "#ffb199", "#ff0844", "#ffb199"];
 const total = premios.length;
-const angulo = (2 * Math.PI) / total;
+const anguloFatia = 360 / total;
 
 let rotacaoAtual = 0;
 let girando = false;
@@ -132,11 +132,11 @@ let escalaSim = 1;
 function desenhar() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     for (let i = 0; i < total; i++) {
-        const ang = i * angulo;
+        const ang = i * (Math.PI * 2 / total);
         ctx.beginPath();
         ctx.fillStyle = cores[i % cores.length];
         ctx.moveTo(150, 150);
-        ctx.arc(150, 150, 150, ang, ang + angulo);
+        ctx.arc(150, 150, 150, ang, ang + (Math.PI * 2 / total));
         ctx.fill();
         ctx.lineWidth = 2;
         ctx.strokeStyle = "#ffffff";
@@ -144,7 +144,7 @@ function desenhar() {
         
         ctx.save();
         ctx.translate(150, 150);
-        ctx.rotate(ang + angulo / 2);
+        ctx.rotate(ang + (Math.PI * 2 / total) / 2);
         ctx.fillStyle = (i === 5 || i === 6) ? "#ffffff" : "#4a4a4a"; 
         ctx.font = "bold 14px 'Fredoka', sans-serif";
         ctx.textAlign = "right";
@@ -170,57 +170,80 @@ function choverBaloesECoracoes() {
     }
 }
 
-// INICIAR GIRO
+// === MOTOR FÍSICO DA ROLETA E SINCRONIZAÇÃO DE SOM ===
 function iniciarGiro(e) {
     if (e.cancelable) e.preventDefault();
     if (girando) return;
     girando = true;
 
-    // Desbloqueia o áudio final no momento exato do clique
+    // Desbloqueia áudio
     somVitoria.play().then(() => somVitoria.pause()).catch(()=>{});
     if (audioCtx.state === 'suspended') audioCtx.resume();
 
     btnGirar.style.animation = "none"; 
     resultado.innerText = "Cruzando os dedos... 🫣";
 
-    // Dispara os "tiques" pelo gerador embutido
-    let tempoDecorrido = 0;
-    let intervaloGiro = setInterval(() => {
-        tocarTique();
-        if (navigator.vibrate) navigator.vibrate(10); 
-        tempoDecorrido += 200;
-        if (tempoDecorrido > 6500) clearInterval(intervaloGiro); 
-    }, 200);
-
     const voltas = 8; 
-    const indexAlvo = 6; 
+    const indexAlvo = 6; // CINEMA
     
-    const anguloFatia = 360 / total;
     const angAlvo = (total - indexAlvo) * anguloFatia + 270 - (anguloFatia / 2) - 10; 
+    const rotacaoFinal = rotacaoAtual + (360 * voltas) + angAlvo;
+    
+    const tempoInicio = performance.now();
+    const duracao = 7000; // 7 segundos cravados
+    
+    // A cada quantos graus a roleta deve fazer o barulho de "tique" (1 tique por fatia)
+    const grausPorTique = anguloFatia; 
+    let tiqueAnterior = Math.floor(rotacaoAtual / grausPorTique);
 
-    rotacaoAtual += (360 * voltas) + angAlvo;
+    function animarRoleta(tempoAtual) {
+        let tempoPassado = tempoAtual - tempoInicio;
+        let progresso = tempoPassado / duracao;
 
-    canvas.style.transition = "transform 7s cubic-bezier(0.1, 0.8, 0.1, 1)"; 
-    canvas.style.transform = `rotate(${rotacaoAtual}deg)`;
+        if (progresso > 1) progresso = 1;
 
+        // Efeito ease-out customizado (começa muito rápido, desacelera suavemente no final)
+        let curvaAceleracao = 1 - Math.pow(1 - progresso, 4);
+        
+        let anguloAtualMotor = rotacaoAtual + ((rotacaoFinal - rotacaoAtual) * curvaAceleracao);
+        canvas.style.transform = `rotate(${anguloAtualMotor}deg)`;
+
+        // SINCRONIZAÇÃO: O tique só toca se o ângulo passou para uma nova fatia
+        let tiqueAtual = Math.floor(anguloAtualMotor / grausPorTique);
+        if (tiqueAtual > tiqueAnterior) {
+            tocarTique();
+            if (navigator.vibrate) navigator.vibrate(10);
+            tiqueAnterior = tiqueAtual;
+        }
+
+        if (progresso < 1) {
+            requestAnimationFrame(animarRoleta); // Continua girando
+        } else {
+            rotacaoAtual = rotacaoFinal; // Salva a posição exata de parada
+            finalizarGiro();
+        }
+    }
+    
+    // Inicia a animação frame a frame
+    requestAnimationFrame(animarRoleta);
+}
+
+function finalizarGiro() {
+    somVitoria.currentTime = 0;
+    somVitoria.play().catch(()=>{});
+    if (navigator.vibrate) navigator.vibrate([200, 100, 200]); 
+    
+    resultado.innerText = "🎉 AÍ SIM!!!";
+    choverBaloesECoracoes(); 
+    
     setTimeout(() => {
-        somVitoria.currentTime = 0;
-        somVitoria.play().catch(()=>{});
-        if (navigator.vibrate) navigator.vibrate([200, 100, 200]); 
-        
-        resultado.innerText = "🎉 AÍ SIM!!!";
-        choverBaloesECoracoes(); 
-        
+        tela1.style.opacity = "0";
         setTimeout(() => {
-            tela1.style.opacity = "0";
-            setTimeout(() => {
-                tela1.style.display = "none";
-                tela2.style.display = "block";
-                setTimeout(() => tela2.style.opacity = "1", 50); 
-            }, 500);
-        }, 2000);
-
-    }, 7000); 
+            tela1.style.display = "none";
+            tela2.style.display = "block";
+            setTimeout(() => tela2.style.opacity = "1", 50); 
+        }, 500);
+    }, 2000);
 }
 
 btnGirar.addEventListener("touchstart", iniciarGiro, { passive: false });
