@@ -115,7 +115,7 @@ function tocarTique() {
     osc.type = 'sine';
     osc.frequency.setValueAtTime(800, audioCtx.currentTime);
     osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.05);
-    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
     gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
     osc.start(audioCtx.currentTime);
     osc.stop(audioCtx.currentTime + 0.05);
@@ -123,28 +123,28 @@ function tocarTique() {
 
 const premios = ["Carrinho Shein 🛍️", "Cupom R$100 💎", "Jantar 🍝", "Massagem 💆", "Dia de Princesa 👑", "Chocolate 🍫", "CINEMA ❤️"];
 const cores = ["#ff9a9e", "#fecfef", "#fbc2eb", "#f48fb1", "#ffb199", "#ff0844", "#ffb199"];
-const total = premios.length;
-const anguloFatia = 360 / total;
+const totalPremios = premios.length;
+const anguloFatia = 360 / totalPremios;
 
-let rotacaoAtual = 0;
+let rotacaoAcumulada = 0;
 let girando = false;
 let escalaSim = 1;
 
 function desenhar() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for (let i = 0; i < total; i++) {
-        const ang = i * (Math.PI * 2 / total);
+    for (let i = 0; i < totalPremios; i++) {
+        const ang = i * (Math.PI * 2 / totalPremios);
         ctx.beginPath();
         ctx.fillStyle = cores[i % cores.length];
         ctx.moveTo(150, 150);
-        ctx.arc(150, 150, 150, ang, ang + (Math.PI * 2 / total));
+        ctx.arc(150, 150, 150, ang, ang + (Math.PI * 2 / totalPremios));
         ctx.fill();
         ctx.lineWidth = 2;
         ctx.strokeStyle = "#ffffff";
         ctx.stroke();
         ctx.save();
         ctx.translate(150, 150);
-        ctx.rotate(ang + (Math.PI * 2 / total) / 2);
+        ctx.rotate(ang + (Math.PI * 2 / totalPremios) / 2);
         ctx.fillStyle = (i === 5 || i === 6) ? "#ffffff" : "#4a4a4a"; 
         ctx.font = "bold 14px 'Fredoka', sans-serif";
         ctx.textAlign = "right";
@@ -178,42 +178,47 @@ function iniciarGiro(e) {
     resultado.innerText = "Girando... 🫣";
     if (audioCtx.state === 'suspended') audioCtx.resume();
 
-    const voltas = 7 + tentativas; 
-    const indexAlvo = 6; // Cinema
-    const angAlvo = (total - indexAlvo) * anguloFatia + 270 - (anguloFatia / 2) - 10; 
-    const rotacaoFinal = rotacaoAtual + (360 * voltas) + angAlvo;
+    const voltasExtras = 7 + (tentativas * 2); 
+    const indexCinema = 6; 
     
+    // CORREÇÃO CRÍTICA: Alinhamento perfeito com o ponteiro superior (270 graus)
+    // O ponteiro do canvas começa em 0 (direita). Para parar no topo, calculamos:
+    const destinoGraus = (totalPremios - indexCinema) * anguloFatia + 270 - (anguloFatia / 2);
+    
+    const rotacaoFinal = (360 * voltasExtras) + destinoGraus;
+    const duracao = 6000; 
     const tempoInicio = performance.now();
-    const duracao = 5000; 
-    const grausPorTique = anguloFatia; 
-    let tiqueAnterior = Math.floor(rotacaoAtual / grausPorTique);
+    
+    let tiqueAnterior = Math.floor(rotacaoAcumulada / anguloFatia);
 
-    function animarRoleta(tempoAtual) {
-        let tempoPassado = tempoAtual - tempoInicio;
-        let progresso = tempoPassado / duracao;
-        if (progresso > 1) progresso = 1;
+    function animar(tempoAtual) {
+        let passado = tempoAtual - tempoInicio;
+        let progresso = Math.min(passado / duracao, 1);
 
-        let curvaAceleracao = 1 - Math.pow(1 - progresso, 4);
-        let anguloAtualMotor = rotacaoAtual + ((rotacaoFinal - rotacaoAtual) * curvaAceleracao);
-        canvas.style.transform = `rotate(${anguloAtualMotor}deg)`;
+        // Ease-out forte para o suspense
+        let ease = 1 - Math.pow(1 - progresso, 4);
+        let anguloAtual = rotacaoAcumulada + (rotacaoFinal - rotacaoAcumulada) * ease;
+        
+        canvas.style.transform = `rotate(${anguloAtual}deg)`;
 
-        let tiqueAtual = Math.floor(anguloAtualMotor / grausPorTique);
+        let tiqueAtual = Math.floor(anguloAtual / anguloFatia);
         if (tiqueAtual > tiqueAnterior) {
             tocarTique();
+            if (navigator.vibrate) navigator.vibrate(10);
             tiqueAnterior = tiqueAtual;
         }
 
         if (progresso < 1) {
-            requestAnimationFrame(animarRoleta);
+            requestAnimationFrame(animar);
         } else {
-            rotacaoAtual = rotacaoFinal;
-            finalizarGiro();
+            rotacaoAcumulada = anguloAtual % 360; 
+            finalizar();
         }
     }
-    requestAnimationFrame(animarRoleta);
+    requestAnimationFrame(animar);
 }
 
-function finalizarGiro() {
+function finalizar() {
     somVitoria.currentTime = 0;
     somVitoria.play().catch(()=>{});
     
@@ -241,19 +246,15 @@ function finalizarGiro() {
 btnGirar.addEventListener("touchstart", iniciarGiro, { passive: false });
 btnGirar.addEventListener("click", iniciarGiro);
 
-// BOTÃO NÃO: FOGE SEMPRE E NUNCA SOME
 function fugir(e) {
     if (e.cancelable) e.preventDefault();
 
-    const maxLargura = window.innerWidth - btnNao.offsetWidth - 20;
-    const maxAltura = window.innerHeight - btnNao.offsetHeight - 20;
-
-    const randomX = Math.max(10, Math.floor(Math.random() * maxLargura));
-    const randomY = Math.max(10, Math.floor(Math.random() * maxAltura));
+    const maxX = window.innerWidth - btnNao.offsetWidth - 20;
+    const maxY = window.innerHeight - btnNao.offsetHeight - 20;
 
     btnNao.style.position = 'fixed';
-    btnNao.style.left = randomX + 'px';
-    btnNao.style.top = randomY + 'px';
+    btnNao.style.left = Math.max(10, Math.random() * maxX) + 'px';
+    btnNao.style.top = Math.max(10, Math.random() * maxY) + 'px';
 
     escalaSim += 0.35; 
     btnSim.style.transform = `scale(${escalaSim})`;
