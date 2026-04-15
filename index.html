@@ -34,13 +34,13 @@ p { font-size: 1.1rem; color: #555; margin-top: 10px; font-weight: 500; }
 canvas { border-radius: 50%; box-shadow: 0 10px 25px rgba(216, 27, 96, 0.3); border: 5px solid #fff; width: 100%; height: 100%; }
 img { width: 100%; max-height: 180px; object-fit: contain; margin-top: 10px; border-radius: 15px; pointer-events: none; }
 
-.area-botoes { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 20px; height: 60px; }
+.area-botoes { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 20px; min-height: 80px; }
 button { border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: bold; font-family: inherit; border-radius: 50px; cursor: pointer; box-shadow: 0 4px 15px rgba(255, 105, 135, 0.3); touch-action: manipulation; }
 
 #girar { background: linear-gradient(45deg, #ff416c, #ff4b2b); color: white; width: 80%; margin-top: 15px; animation: pulse-anim 2s infinite; }
 @keyframes pulse-anim { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 #btn-sim { background: linear-gradient(45deg, #ff416c, #ff4b2b); color: white; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 999; }
-#btn-nao { background: #f8bbd0; color: #880e4f; position: relative; z-index: 50; transition: opacity 0.2s, transform 0.1s; }
+#btn-nao { background: #f8bbd0; color: #880e4f; position: relative; z-index: 50; }
 
 .resultado { margin-top: 20px; font-weight: 600; font-size: 1.2rem; color: #c2185b; min-height: 28px; }
 .detalhes { text-align: left; background: rgba(255, 255, 255, 0.7); padding: 20px; border-radius: 15px; margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
@@ -54,19 +54,19 @@ button { border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: bold;
 <body>
 
 <div class="glass-panel" id="tela1">
-    <h2>🎡 Roleta do Amor 🎡</h2>
+    <h2 id="titulo-roleta">🎡 Roleta do Amor 🎡</h2>
     <div class="roleta-container">
         <div class="ponteiro">🔻</div>
         <canvas id="roleta" width="300" height="300"></canvas>
     </div>
-    <button id="girar">Girar Sorte 💖</button>
+    <button id="girar">Girar (1/3) 💖</button>
     <div class="resultado" id="resultado"></div>
 </div>
 
 <div class="glass-panel" id="tela2">
     <h2>🎉 DEU CINEMA!</h2>
-    <img src="https://media.tenor.com/efhiB6ED9g8AAAAi/tkthao219-bubududu.gif">
-    <p>O destino escolheu! Aceita ir comigo? ❤️🍿</p>
+    <img src="https://media.tenor.com/On7y968aN8AAAAAi/milk-and-mocha-bear.gif">
+    <p>Não tem jeito, é o destino! Aceita ir comigo? ❤️🍿</p>
     <div class="area-botoes">
         <button id="btn-sim">Sim! ❤️</button>
         <button id="btn-nao">Não 😢</button>
@@ -95,12 +95,16 @@ const tela3 = document.getElementById("tela3");
 const btnSim = document.getElementById("btn-sim");
 const btnNao = document.getElementById("btn-nao");
 
-// Áudio final de comemoração
 const somVitoria = new Audio("https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3");
-
-// Gerador de Tique-Taque do zero (Sincronizado perfeitamente com a física)
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 const audioCtx = new AudioContext();
+
+let tentativas = 0;
+const frasesResultado = [
+    "🎉 VOCÊ GANHOU: CINEMA! ❤️🍿",
+    "🤔 Ué... Deu CINEMA de novo! ❤️🍿",
+    "✨ É o destino! CINEMA de novo! ❤️🍿"
+];
 
 function tocarTique() {
     if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -108,14 +112,11 @@ function tocarTique() {
     const gainNode = audioCtx.createGain();
     osc.connect(gainNode);
     gainNode.connect(audioCtx.destination);
-    
     osc.type = 'sine';
     osc.frequency.setValueAtTime(800, audioCtx.currentTime);
     osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.05);
-    
-    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
     gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
-    
     osc.start(audioCtx.currentTime);
     osc.stop(audioCtx.currentTime + 0.05);
 }
@@ -141,7 +142,6 @@ function desenhar() {
         ctx.lineWidth = 2;
         ctx.strokeStyle = "#ffffff";
         ctx.stroke();
-        
         ctx.save();
         ctx.translate(150, 150);
         ctx.rotate(ang + (Math.PI * 2 / total) / 2);
@@ -155,13 +155,12 @@ function desenhar() {
 desenhar();
 
 function choverBaloesECoracoes() {
-    const emojis = ['🎈', '❤️', '🎈', '💖', '🎈', '💕', '✨', '🍿'];
+    const emojis = ['🎈', '❤️', '💖', '💕', '✨', '🍿'];
     for (let i = 0; i < 70; i++) {
         const el = document.createElement("div");
         el.innerText = emojis[Math.floor(Math.random() * emojis.length)];
         el.style.position = "fixed";
-        el.style.top = "-50px";
-        el.style.left = Math.random() * 100 + "vw";
+        el.style.top = "-50px"; el.style.left = Math.random() * 100 + "vw";
         el.style.fontSize = Math.random() * 20 + 20 + "px";
         el.style.zIndex = "9999";
         el.style.animation = `chuva ${Math.random() * 3 + 2}s linear forwards`;
@@ -170,107 +169,93 @@ function choverBaloesECoracoes() {
     }
 }
 
-// === MOTOR FÍSICO DA ROLETA E SINCRONIZAÇÃO DE SOM ===
 function iniciarGiro(e) {
     if (e.cancelable) e.preventDefault();
     if (girando) return;
     girando = true;
 
-    // Desbloqueia áudio
-    somVitoria.play().then(() => somVitoria.pause()).catch(()=>{});
+    btnGirar.style.animation = "none";
+    resultado.innerText = "Girando... 🫣";
     if (audioCtx.state === 'suspended') audioCtx.resume();
 
-    btnGirar.style.animation = "none"; 
-    resultado.innerText = "Cruzando os dedos... 🫣";
-
-    const voltas = 8; 
-    const indexAlvo = 6; // CINEMA
-    
+    const voltas = 7 + tentativas; 
+    const indexAlvo = 6; // Cinema
     const angAlvo = (total - indexAlvo) * anguloFatia + 270 - (anguloFatia / 2) - 10; 
     const rotacaoFinal = rotacaoAtual + (360 * voltas) + angAlvo;
     
     const tempoInicio = performance.now();
-    const duracao = 7000; // 7 segundos cravados
-    
-    // A cada quantos graus a roleta deve fazer o barulho de "tique" (1 tique por fatia)
+    const duracao = 5000; 
     const grausPorTique = anguloFatia; 
     let tiqueAnterior = Math.floor(rotacaoAtual / grausPorTique);
 
     function animarRoleta(tempoAtual) {
         let tempoPassado = tempoAtual - tempoInicio;
         let progresso = tempoPassado / duracao;
-
         if (progresso > 1) progresso = 1;
 
-        // Efeito ease-out customizado (começa muito rápido, desacelera suavemente no final)
         let curvaAceleracao = 1 - Math.pow(1 - progresso, 4);
-        
         let anguloAtualMotor = rotacaoAtual + ((rotacaoFinal - rotacaoAtual) * curvaAceleracao);
         canvas.style.transform = `rotate(${anguloAtualMotor}deg)`;
 
-        // SINCRONIZAÇÃO: O tique só toca se o ângulo passou para uma nova fatia
         let tiqueAtual = Math.floor(anguloAtualMotor / grausPorTique);
         if (tiqueAtual > tiqueAnterior) {
             tocarTique();
-            if (navigator.vibrate) navigator.vibrate(10);
             tiqueAnterior = tiqueAtual;
         }
 
         if (progresso < 1) {
-            requestAnimationFrame(animarRoleta); // Continua girando
+            requestAnimationFrame(animarRoleta);
         } else {
-            rotacaoAtual = rotacaoFinal; // Salva a posição exata de parada
+            rotacaoAtual = rotacaoFinal;
             finalizarGiro();
         }
     }
-    
-    // Inicia a animação frame a frame
     requestAnimationFrame(animarRoleta);
 }
 
 function finalizarGiro() {
     somVitoria.currentTime = 0;
     somVitoria.play().catch(()=>{});
-    if (navigator.vibrate) navigator.vibrate([200, 100, 200]); 
     
-    resultado.innerText = "🎉 AÍ SIM!!!";
-    choverBaloesECoracoes(); 
-    
-    setTimeout(() => {
-        tela1.style.opacity = "0";
+    resultado.innerText = frasesResultado[tentativas];
+    tentativas++;
+
+    if (tentativas < 3) {
         setTimeout(() => {
-            tela1.style.display = "none";
-            tela2.style.display = "block";
-            setTimeout(() => tela2.style.opacity = "1", 50); 
-        }, 500);
-    }, 2000);
+            btnGirar.innerText = `Girar (${tentativas + 1}/3) 💖`;
+            btnGirar.style.animation = "pulse-anim 2s infinite";
+            girando = false;
+        }, 1500);
+    } else {
+        setTimeout(() => {
+            tela1.style.opacity = "0";
+            setTimeout(() => {
+                tela1.style.display = "none";
+                tela2.style.display = "block";
+                setTimeout(() => tela2.style.opacity = "1", 50); 
+            }, 500);
+        }, 2000);
+    }
 }
 
 btnGirar.addEventListener("touchstart", iniciarGiro, { passive: false });
 btnGirar.addEventListener("click", iniciarGiro);
 
-// BOTÃO NÃO QUE FOGE E PISCA
+// BOTÃO NÃO: FOGE SEMPRE E NUNCA SOME
 function fugir(e) {
     if (e.cancelable) e.preventDefault();
 
-    btnNao.style.opacity = '0';
-    
-    setTimeout(() => {
-        btnNao.style.position = 'fixed'; 
+    const maxLargura = window.innerWidth - btnNao.offsetWidth - 20;
+    const maxAltura = window.innerHeight - btnNao.offsetHeight - 20;
 
-        const maxLargura = window.innerWidth - btnNao.offsetWidth - 20;
-        const maxAltura = window.innerHeight - btnNao.offsetHeight - 20;
+    const randomX = Math.max(10, Math.floor(Math.random() * maxLargura));
+    const randomY = Math.max(10, Math.floor(Math.random() * maxAltura));
 
-        const randomX = Math.max(10, Math.floor(Math.random() * maxLargura));
-        const randomY = Math.max(10, Math.floor(Math.random() * maxAltura));
+    btnNao.style.position = 'fixed';
+    btnNao.style.left = randomX + 'px';
+    btnNao.style.top = randomY + 'px';
 
-        btnNao.style.left = randomX + 'px';
-        btnNao.style.top = randomY + 'px';
-        
-        btnNao.style.opacity = '1'; 
-    }, 150);
-
-    escalaSim += 0.3; 
+    escalaSim += 0.35; 
     btnSim.style.transform = `scale(${escalaSim})`;
 }
 
@@ -278,13 +263,9 @@ btnNao.addEventListener('touchstart', fugir, { passive: false });
 btnNao.addEventListener('mouseover', fugir);
 btnNao.addEventListener('click', fugir);
 
-// ACEITOU (CHUVA DE BALÕES)
 function aceitouEncontro(e) {
     if (e.cancelable) e.preventDefault();
-    
     choverBaloesECoracoes();
-    setTimeout(choverBaloesECoracoes, 800); 
-    
     tela2.style.opacity = "0";
     setTimeout(() => {
         tela2.style.display = "none";
