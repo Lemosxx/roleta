@@ -9,17 +9,16 @@
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body { 
-            /* Fundo escuro texturizado para destacar o 3D */
             background: radial-gradient(circle at center, #2c0e0e 0%, #100505 100%); 
             font-family: 'Fredoka', sans-serif; 
             display: flex; justify-content: center; align-items: center; 
             min-height: 100vh; width: 100vw; overflow: hidden; 
         }
         
-        /* Painel flutuante com profundidade */
+        /* Painel 3D Luxuoso */
         .glass-panel {
             background: linear-gradient(135deg, rgba(255, 253, 245, 0.9) 0%, rgba(255, 255, 255, 0.95) 100%);
-            border: 4px solid #d4af37; /* Borda Dourada */
+            border: 4px solid #d4af37;
             border-radius: 35px;
             padding: 30px 20px; 
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(212, 175, 55, 0.2);
@@ -30,101 +29,112 @@
         
         h2 { 
             font-family: 'Marcellus', serif; 
-            color: #a31d1d; /* Vermelho Cassino */
+            color: #a31d1d; 
             font-size: 1.8rem; 
             text-transform: uppercase; 
             letter-spacing: 2px;
             margin-bottom: 15px; 
             text-shadow: 1px 1px 0px white, 0 0 10px rgba(163, 29, 29, 0.3);
         }
+
+        /* === SISTEMA DE LEDS PISCANTES === */
+        .led-container {
+            position: absolute; top: -8px; left: -8px; right: -8px; bottom: -8px;
+            border-radius: 40px; pointer-events: none; z-index: -1;
+        }
+        .led {
+            position: absolute; width: 12px; height: 12px;
+            background: #ffd700; border-radius: 50%;
+            box-shadow: 0 0 10px #ffd700, 0 0 20px #fff;
+            animation: piscar 1s infinite alternate;
+        }
+        /* Posicionamento dos LEDs (Cantos e meios) */
+        .led:nth-child(1) { top: 10px; left: 10px; animation-delay: 0s; }
+        .led:nth-child(2) { top: -6px; left: 50%; transform: translateX(-50%); animation-delay: 0.2s; }
+        .led:nth-child(3) { top: 10px; right: 10px; animation-delay: 0.4s; }
+        .led:nth-child(4) { top: 50%; right: -6px; transform: translateY(-50%); animation-delay: 0.6s; }
+        .led:nth-child(5) { bottom: 10px; right: 10px; animation-delay: 0.8s; }
+        .led:nth-child(6) { bottom: -6px; left: 50%; transform: translateX(-50%); animation-delay: 1.0s; }
+        .led:nth-child(7) { bottom: 10px; left: 10px; animation-delay: 1.2s; }
+        .led:nth-child(8) { top: 50%; left: -6px; transform: translateY(-50%); animation-delay: 1.4s; }
         
-        /* === A ROLETA REALISTA 3D === */
+        @keyframes piscar { 0% { opacity: 0.2; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1.1); } }
+        
+        /* === A ROLETA 3D === */
         .roleta-wrapper {
             position: relative; width: 280px; height: 280px; margin: 20px auto;
-            /* Base Dourada Cônica para efeito metalizado 3D */
             background: conic-gradient(from 180deg at 50% 50%, #b89c31 0%, #d4af37 20%, #f7e08b 40%, #d4af37 60%, #b89c31 80%, #d4af37 100%);
-            border-radius: 50%;
-            padding: 10px; /* Espaço para a borda dourada */
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            border-radius: 50%; padding: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        /* O Centro de metal (onde o ponteiro virtual estaria) */
         .roleta-center {
-            position: absolute; top: 50%; left: 50%; 
-            transform: translate(-50%, -50%); 
-            width: 50px; height: 50px;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            width: 45px; height: 45px;
             background: radial-gradient(circle at 30% 30%, #fff 0%, #d4af37 40%, #b89c31 100%);
-            border-radius: 50%; z-index: 25;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            border-radius: 50%; z-index: 25; box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+            border: 2px solid #8c6a1d;
         }
 
         .ponteiro { 
-            position: absolute; top: -25px; left: 50%; 
-            transform: translateX(-50%); 
-            font-size: 45px; z-index: 30; 
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); 
+            position: absolute; top: -25px; left: 50%; transform: translateX(-50%); 
+            font-size: 45px; z-index: 30; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.4)); 
         }
 
         canvas { 
-            border-radius: 50%; 
-            /* Efeito Cônico nas fatias para volume */
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.3);
-            width: 100%; height: 100%; 
-            transition: transform 0.1s linear; 
+            border-radius: 50%; box-shadow: inset 0 0 40px rgba(0,0,0,0.4);
+            width: 100%; height: 100%; transition: transform 0.1s linear; 
         }
 
-        /* === GIFS E DETALHES === */
+        /* === GIFS E BOTÕES === */
         .gif-box { 
-            width: 100%; height: 220px; margin: 15px 0; 
-            border-radius: 20px; overflow: hidden; 
-            border: 4px solid #d4af37; background: #fff; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            width: 100%; height: 220px; margin: 15px 0; border-radius: 20px; overflow: hidden; 
+            border: 4px solid #d4af37; background: #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex; justify-content: center; align-items: center;
         }
         .gif-box img { width: 100%; height: 100%; object-fit: contain; }
 
-        .area-botoes { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 20px; min-height: 120px; position: relative; width: 100%; }
+        .area-botoes { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 20px; min-height: 120px; width: 100%; }
         
-        /* Botões com efeito de volume */
         button { 
-            border: none; padding: 18px; 
-            font-size: 1.2rem; font-weight: bold; font-family: inherit; 
-            border-radius: 18px; cursor: pointer; text-transform: uppercase; 
-            width: 85%;
+            border: none; padding: 18px; font-size: 1.2rem; font-weight: bold; font-family: inherit; 
+            border-radius: 18px; cursor: pointer; text-transform: uppercase; width: 85%;
             transition: all 0.2s ease;
         }
         
         #girar { 
-            background: linear-gradient(180deg, #a31d1d 0%, #7c1616 100%); 
-            color: #fff; border: 2px solid #d4af37;
+            background: linear-gradient(180deg, #a31d1d 0%, #7c1616 100%); color: #fff; border: 2px solid #d4af37;
             box-shadow: 0 6px 0 #5e1111, 0 8px 15px rgba(0,0,0,0.2); 
         }
         #girar:active { transform: translateY(3px); box-shadow: 0 3px 0 #5e1111, 0 4px 10px rgba(0,0,0,0.2); }
 
         #btn-sim { 
-            background: linear-gradient(180deg, #a31d1d 0%, #7c1616 100%); 
-            color: white; border: 2px solid #d4af37;
-            box-shadow: 0 0 20px rgba(163, 29, 29, 0.4); 
+            background: linear-gradient(180deg, #a31d1d 0%, #7c1616 100%); color: white; border: 2px solid #d4af37;
+            box-shadow: 0 0 20px rgba(163, 29, 29, 0.4); z-index: 100; position: relative;
         }
-        #btn-sim:active { transform: scale(0.95); }
 
         #btn-nao { 
-            background: #fff; color: #a31d1d; 
-            border: 2px solid #d4af37;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            background: #fff; color: #a31d1d; border: 2px solid #d4af37;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 50; position: relative;
         }
 
-        /* Deboche Estilizado */
-        .deboche { position: fixed; color: #ffd700; font-weight: bold; font-size: 1.3rem; pointer-events: none; z-index: 1000; text-shadow: 2px 2px #000; animation: floatUp 1.2s ease-out forwards; }
-        @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-100px) scale(1.3); opacity: 0; } }
+        /* === DEBOCHE E CONFETES === */
+        .deboche { position: fixed; color: #ffd700; font-weight: bold; font-size: 1.4rem; pointer-events: none; z-index: 1000; text-shadow: 2px 2px #000; animation: floatUp 2s ease-out forwards; }
+        @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-120px) scale(1.4); opacity: 0; } }
 
         .detalhes { text-align: left; background: #fff5e6; padding: 20px; border-radius: 20px; border: 2px dashed #d4af37; margin-top: 15px; box-shadow: inset 0 0 10px rgba(212, 175, 55, 0.1); }
         .detalhes h3 { color: #a31d1d; font-size: 1.1rem; margin-bottom: 5px; }
-        @keyframes chuva { 0% { transform: translateY(-10vh); opacity: 1; } 100% { transform: translateY(110vh); opacity: 0; } }
+
+        .confete { position: fixed; pointer-events: none; z-index: 2000; border-radius: 4px; }
+        @keyframes chuva { 0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(110vh) rotate(360deg); opacity: 0; } }
     </style>
 </head>
 <body>
 
 <div class="glass-panel" id="tela1">
+    <div class="led-container">
+        <div class="led"></div><div class="led"></div><div class="led"></div><div class="led"></div>
+        <div class="led"></div><div class="led"></div><div class="led"></div><div class="led"></div>
+    </div>
     <h2>🎡 A Grande Sorte 🎡</h2>
     <div class="roleta-wrapper">
         <div class="roleta-center"></div>
@@ -136,20 +146,26 @@
 </div>
 
 <div class="glass-panel" id="tela2">
+    <div class="led-container">
+        <div class="led"></div><div class="led"></div><div class="led"></div><div class="led"></div>
+        <div class="led"></div><div class="led"></div><div class="led"></div><div class="led"></div>
+    </div>
     <h2>🎟️ Ticket Premiado!</h2>
     <div class="gif-box">
         <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHpueXp6M3RtcGZueXp6M3RtcGZueXp6M3RtcGZueXp6M3RtcGZueSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/MDJ9IbMvLUF2S393U9/giphy.gif" alt="Cat GIF">
     </div>
-    <p>O Carrossel parou no lugar certo! Vamos ao cinema? ❤️🍿</p>
+    <p style="margin: 15px 0; font-weight: 600;">O Carrossel escolheu! Vamos ao cinema? ❤️🍿</p>
     <div class="area-botoes">
         <button id="btn-sim">COM CERTEZA! ❤️</button>
         <button id="btn-nao">TALVEZ NÃO... 😢</button>
     </div>
 </div>
 
-<div class="carousel-card" style="display:none;" id="tela3"> </div>
-
-<div class="glass-panel" id="tela3-visual" style="display:none; opacity:0;">
+<div class="glass-panel" id="tela3">
+    <div class="led-container">
+        <div class="led"></div><div class="led"></div><div class="led"></div><div class="led"></div>
+        <div class="led"></div><div class="led"></div><div class="led"></div><div class="led"></div>
+    </div>
     <h2>🎠 Nosso Bilhete 🎠</h2>
     <div class="gif-box">
         <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMnVpYjR4eXp6M3RtcGZueXp6M3RtcGZueXp6M3RtcGZueXp6M3RtcGZueSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/c76IJLufpNUMo/giphy.gif" alt="Bear GIF">
@@ -163,22 +179,19 @@
 </div>
 
 <script>
-    // Mantivemos a lógica idêntica, apenas ajustando as referências visuais da Tela 3
     const canvas = document.getElementById("roleta");
     const ctx = canvas.getContext("2d");
     const btnGirar = document.getElementById("girar");
     const resultado = document.getElementById("resultado");
     const tela1 = document.getElementById("tela1");
     const tela2 = document.getElementById("tela2");
-    const tela3Visual = document.getElementById("tela3-visual"); // Nova referência visual
+    const tela3 = document.getElementById("tela3");
     const btnSim = document.getElementById("btn-sim");
     const btnNao = document.getElementById("btn-nao");
 
     let audioCtx;
     function initAudio() {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
 
     function tocarTique() {
@@ -186,7 +199,7 @@
         const osc = audioCtx.createOscillator();
         const g = audioCtx.createGain();
         osc.connect(g); g.connect(audioCtx.destination);
-        osc.frequency.setValueAtTime(900, audioCtx.currentTime); // Tom ligeiramente mais alto e metálico
+        osc.frequency.setValueAtTime(900, audioCtx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.04);
         g.gain.setValueAtTime(0.06, audioCtx.currentTime);
         g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.04);
@@ -200,30 +213,29 @@
 
     let rotacao = 0, girando = false, tentativas = 0, escalaSim = 1;
 
-    // Desenho da roleta aprimorado com gradientes nas fatias
     function desenhar() {
         ctx.clearRect(0,0,300,300);
         for(let i=0; i<total; i++) {
             const ang = i * (Math.PI*2/total);
             
-            // Gradiente Cônico na fatia para dar volume
+            // Fatias
             ctx.beginPath();
             ctx.fillStyle = cores[i%cores.length];
             ctx.moveTo(150,150);
             ctx.arc(150,150,145,ang,ang+(Math.PI*2/total));
             ctx.fill();
             
-            // Sombra interna na fatia
-            ctx.lineWidth = 1;
-            ctx.strokeStyle = "rgba(0,0,0,0.2)";
+            // Sombra para volume 3D
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "rgba(0,0,0,0.3)";
             ctx.stroke();
 
-            // Texto com fonte de luxo
+            // Texto Luxuoso
             ctx.save();
             ctx.translate(150,150);
             ctx.rotate(ang+(Math.PI*2/total)/2);
             ctx.fillStyle = "#fff";
-            ctx.font = "bold 15px 'Marcellus', serif"; // Fonte Sophisticada
+            ctx.font = "bold 15px 'Marcellus', serif";
             ctx.textAlign = "right";
             ctx.fillText(premios[i], 130, 5);
             ctx.restore();
@@ -231,12 +243,37 @@
     }
     desenhar();
 
+    // Sistema de Confetes e Emojis Festivos
+    function criarChuvaFestiva() {
+        const itens = ['✨', '🎟️', '🍿', '❤️', '💰', '🎈'];
+        const coresConfete = ['#ff416c', '#ffd700', '#ffffff', '#a31d1d'];
+        
+        for(let i=0; i<100; i++) {
+            const el = document.createElement("div");
+            el.className = "confete";
+            
+            if(Math.random() > 0.5) {
+                el.innerText = itens[Math.floor(Math.random()*itens.length)];
+                el.style.fontSize = Math.random() * 20 + 20 + "px";
+            } else {
+                el.style.width = Math.random() * 8 + 4 + "px";
+                el.style.height = Math.random() * 15 + 5 + "px";
+                el.style.backgroundColor = coresConfete[Math.floor(Math.random()*coresConfete.length)];
+            }
+            
+            el.style.left = Math.random()*100+"vw";
+            el.style.animation = `chuva ${Math.random()*3+2}s linear forwards`;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 5000);
+        }
+    }
+
     function iniciarGiro() {
         if(girando) return;
         initAudio();
         girando = true;
         btnGirar.style.opacity = "0.5";
-        btnGirar.style.boxShadow = "0 2px 0 #5e1111"; // Afunda o botão
+        btnGirar.style.boxShadow = "0 2px 0 #5e1111"; 
         resultado.innerText = "Aguarde a sorte...";
         
         const voltas = 10 + (tentativas * 2);
@@ -246,8 +283,8 @@
         let ultimoTique = 0;
 
         function animar(agora) {
-            let prog = Math.min((agora - inicio)/5500, 1); // Giro um pouco mais rápido e dinâmico
-            let ease = 1 - Math.pow(1 - prog, 5); // Ease-out mais acentuado
+            let prog = Math.min((agora - inicio)/5500, 1);
+            let ease = 1 - Math.pow(1 - prog, 5);
             let atual = rotacao + (final - rotacao) * ease;
             canvas.style.transform = `rotate(${atual}deg)`;
             
@@ -274,7 +311,7 @@
             setTimeout(() => { 
                 btnGirar.innerText = `Tentar de novo (${tentativas+1}/3)`; 
                 btnGirar.style.opacity = "1";
-                btnGirar.style.boxShadow = "0 6px 0 #5e1111, 0 8px 15px rgba(0,0,0,0.2)"; // Volta o botão
+                btnGirar.style.boxShadow = "0 6px 0 #5e1111, 0 8px 15px rgba(0,0,0,0.2)";
                 girando = false; 
             }, 1500);
         } else {
@@ -291,24 +328,30 @@
     function fugir(e) {
         if(e.cancelable) e.preventDefault();
         
-        const frases = ["QUASE!", "ERROU!", "TENTA OUTRA!", "LENTA!", "OPA!"];
+        const frases = ["LENTA!", "ERROU FEO!", "NEM QUASE!", "TENTA AÍ!", "AQUI NÃO!"];
         const txt = document.createElement("div");
         txt.className = "deboche";
         txt.innerText = frases[Math.floor(Math.random()*frases.length)];
         const x = e.touches ? e.touches[0].clientX : e.clientX;
         const y = e.touches ? e.touches[0].clientY : e.clientY;
-        txt.style.left = x + "px"; txt.style.top = y + "px";
+        txt.style.left = (x - 40) + "px"; 
+        txt.style.top = y + "px";
         document.body.appendChild(txt);
-        setTimeout(() => txt.remove(), 1200);
+        setTimeout(() => txt.remove(), 2000);
 
-        btnNao.style.position = 'fixed';
-        btnNao.style.left = Math.max(20, Math.random()*(window.innerWidth-120)) + 'px';
-        btnNao.style.top = Math.max(20, Math.random()*(window.innerHeight-60)) + 'px';
-        
+        // Desativa clique e some
+        btnNao.style.pointerEvents = 'none';
         btnNao.style.opacity = '0';
-        setTimeout(() => { btnNao.style.opacity = '1'; }, 400);
+        
+        setTimeout(() => {
+            btnNao.style.position = 'fixed';
+            btnNao.style.left = Math.max(20, Math.random()*(window.innerWidth-150)) + 'px';
+            btnNao.style.top = Math.max(20, Math.random()*(window.innerHeight-80)) + 'px';
+            btnNao.style.opacity = '1';
+            btnNao.style.pointerEvents = 'auto';
+        }, 800);
 
-        escalaSim += 0.45; // Cresce um pouco mais
+        escalaSim += 0.5; 
         btnSim.style.transform = `scale(${escalaSim})`;
     }
 
@@ -316,20 +359,11 @@
     btnNao.addEventListener('click', fugir);
 
     btnSim.addEventListener('click', () => {
-        // Transição para a nova Tela 3 Visual
+        criarChuvaFestiva();
+        setTimeout(criarChuvaFestiva, 1000); // Chuva em dobro
         tela2.style.display = "none"; 
-        tela3Visual.style.display = "block"; 
-        setTimeout(() => {
-            tela3Visual.style.opacity = "1";
-            // Chuva de confetes de luxo (Dourado e Vermelho)
-            for(let i=0; i<60; i++) {
-                const e = document.createElement("div");
-                e.innerText = ['✨','❤️','🎟️','💰'][Math.floor(Math.random()*4)];
-                e.style.position = "fixed"; e.style.top = "-50px"; e.style.left = Math.random()*100+"vw";
-                e.style.fontSize = "30px"; e.style.animation = `chuva ${Math.random()*2+2}s linear forwards`;
-                document.body.appendChild(e);
-            }
-        }, 50);
+        tela3.style.display = "block"; 
+        setTimeout(() => tela3.style.opacity = "1", 50);
     });
 </script>
 </body>
