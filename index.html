@@ -11,14 +11,12 @@
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 body {
-    /* Fundo fofo em tons pastel */
     background: linear-gradient(135deg, #ffc3a0 0%, #ffafbd 100%);
     font-family: 'Fredoka', sans-serif;
     display: flex; justify-content: center; align-items: center;
     min-height: 100vh; width: 100vw; overflow: hidden; color: #4a4a4a;
 }
 
-/* Painel estilo bolha/nuvem */
 .glass-panel {
     background: rgba(255, 255, 255, 0.75); 
     backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
@@ -34,7 +32,6 @@ body {
 h2 { color: #d81b60; margin-top: 0; font-size: 1.8rem; text-shadow: 2px 2px 0px white; }
 p { font-size: 1.15rem; color: #880e4f; margin-top: 10px; font-weight: 500; line-height: 1.4; }
 
-/* ROLETA FOFA (AUMENTADA) */
 .roleta-container { position: relative; width: 310px; height: 310px; margin: 20px auto; }
 .ponteiro { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 45px; z-index: 20; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); }
 canvas { 
@@ -44,21 +41,22 @@ canvas {
     box-shadow: 0 10px 20px rgba(255, 154, 162, 0.5);
 }
 
-/* GIFS BEM ENQUADRADOS */
+/* GIFS LIMPOS (SEM BORDAS OU FUNDOS) */
 .gif-box { 
-    width: 100%; height: 210px; margin: 15px 0; border-radius: 25px; 
+    width: 100%; height: 210px; margin: 15px 0;
     display: flex; justify-content: center; align-items: center;
-    background: rgba(255, 255, 255, 0.8); border: 3px dashed #ffb7b2;
-    overflow: hidden; padding: 5px;
 }
 .gif-box img { 
     max-width: 100%; max-height: 100%; object-fit: contain; 
-    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); border-radius: 20px;
+    filter: drop-shadow(0 8px 15px rgba(0,0,0,0.15)); /* Sombrinha suave para destacar */
 }
 
-.area-botoes { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 20px; min-height: 90px; position: relative; }
+/* BOTÕES ALINHADOS LADO A LADO */
+.area-botoes { 
+    display: flex; justify-content: center; align-items: center; 
+    gap: 15px; margin-top: 20px; min-height: 70px; position: relative; 
+}
 
-/* BOTÕES ARREDONDADOS */
 button { 
     border: none; padding: 18px 25px; font-size: 1.2rem; font-weight: bold; 
     font-family: inherit; border-radius: 50px; cursor: pointer; 
@@ -84,7 +82,6 @@ button {
     box-shadow: 0 6px 0 #ffb7b2; border: 2px solid #ffb7b2;
 }
 
-/* BALÃO DE DEBOCHE FOFO */
 .deboche {
     position: fixed; color: #d81b60; font-weight: 700; font-size: 1.2rem;
     pointer-events: none; z-index: 9999;
@@ -190,8 +187,10 @@ const total = premios.length;
 const fatia = 360 / total;
 
 let rotacao = 0, girando = false, tentativas = 0, escalaSim = 1;
-let isFugindo = false; // TRAVA DE SEGURANÇA CONTRA BUGS
+let isFugindo = false; 
+let podeFugir = false; // TRAVA DE SEGURANÇA NOVA
 
+// Todas as fontes em BRANCO
 function desenhar() {
     ctx.clearRect(0,0,320,320);
     for(let i=0; i<total; i++) {
@@ -200,7 +199,7 @@ function desenhar() {
         ctx.moveTo(160,160); ctx.arc(160,160,160,ang,ang+(Math.PI*2/total)); ctx.fill();
         ctx.save(); ctx.translate(160,160); ctx.rotate(ang+(Math.PI*2/total)/2);
         
-        ctx.fillStyle = (i === 6) ? "#fff" : "#880e4f"; 
+        ctx.fillStyle = "#ffffff"; // TEXTOS TODOS BRANCOS
         ctx.font = "bold 17px 'Fredoka'"; 
         ctx.textAlign = "right"; ctx.fillText(premios[i], 145, 6); ctx.restore(); 
     }
@@ -247,7 +246,15 @@ function finalizar() {
     if(tentativas < 3) {
         setTimeout(() => { btnGirar.innerText = `Girar (${tentativas+1}/3) ✨`; btnGirar.style.opacity = "1"; girando = false; }, 1500);
     } else {
-        setTimeout(() => { tela1.style.display = "none"; tela2.style.display = "block"; setTimeout(()=>tela2.style.opacity="1", 50); }, 2000);
+        setTimeout(() => { 
+            tela1.style.display = "none"; 
+            tela2.style.display = "block"; 
+            setTimeout(() => {
+                tela2.style.opacity = "1";
+                // Só permite o botão fugir 1 segundo depois da tela aparecer (evita bug de toque antecipado)
+                setTimeout(() => { podeFugir = true; }, 1000);
+            }, 50); 
+        }, 2000);
     }
 }
 
@@ -255,7 +262,7 @@ btnGirar.addEventListener("click", iniciarGiro);
 
 function fugir(e) {
     if(e.cancelable) e.preventDefault();
-    if(isFugindo) return; // Impede que a função rode duas vezes e quebre
+    if(!podeFugir || isFugindo) return; 
     isFugindo = true;
     
     const texto = document.createElement("div");
@@ -275,9 +282,8 @@ function fugir(e) {
 
     setTimeout(() => {
         btnNao.style.position = 'fixed';
-        btnNao.style.zIndex = '9999'; // Garante que fique acima de TUDO
+        btnNao.style.zIndex = '9999'; 
         
-        // Cálculo seguro de margens para ele NUNCA sair da tela
         const maxX = window.innerWidth - 120;
         const maxY = window.innerHeight - 80;
         
@@ -286,10 +292,9 @@ function fugir(e) {
         
         btnNao.style.opacity = '1';
         btnNao.style.pointerEvents = 'auto';
-        isFugindo = false; // Libera para fugir de novo
-    }, 500); // Reduzido para 0.5s para não parecer travado
+        isFugindo = false; 
+    }, 500); 
 
-    // O botão sim cresce um pouco menos por vez para não cobrir a tela inteira tão rápido
     escalaSim += 0.3; 
     btnSim.style.transform = `scale(${escalaSim})`;
 }
