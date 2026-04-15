@@ -44,11 +44,11 @@ canvas {
     box-shadow: 0 10px 20px rgba(255, 154, 162, 0.5);
 }
 
-/* GIFS BEM ENQUADRADOS (BORDAS PONTILHADAS REMOVIDAS) */
+/* GIFS BEM ENQUADRADOS */
 .gif-box { 
     width: 100%; height: 210px; margin: 15px 0; border-radius: 25px; 
     display: flex; justify-content: center; align-items: center;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.8); border: 3px dashed #ffb7b2;
     overflow: hidden; padding: 5px;
 }
 .gif-box img { 
@@ -87,7 +87,7 @@ button {
 /* BALÃO DE DEBOCHE FOFO */
 .deboche {
     position: fixed; color: #d81b60; font-weight: 700; font-size: 1.2rem;
-    pointer-events: none; z-index: 200;
+    pointer-events: none; z-index: 9999;
     background: rgba(255, 255, 255, 0.9); padding: 10px 18px; 
     border-radius: 20px; border: 3px solid #ffb7b2;
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
@@ -101,7 +101,7 @@ button {
     100% { opacity: 0; transform: translateY(-100px) scale(0.8); }
 }
 
-.resultado { margin-top: 15px; font-weight: 600; color: #d81b60; min-height: 24px; font-size: 1.3rem; }
+.resultado { margin-top: 15px; font-weight: 700; color: #d81b60; min-height: 24px; font-size: 1.3rem; }
 .detalhes { text-align: left; background: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 25px; margin-top: 15px; border: 3px dashed #ffb7b2; }
 .detalhes h3 { color: #d81b60; margin-bottom: 5px; font-size: 1.15rem; }
 
@@ -190,8 +190,8 @@ const total = premios.length;
 const fatia = 360 / total;
 
 let rotacao = 0, girando = false, tentativas = 0, escalaSim = 1;
+let isFugindo = false; // TRAVA DE SEGURANÇA CONTRA BUGS
 
-// Roleta com raio maior e fontes ajustadas
 function desenhar() {
     ctx.clearRect(0,0,320,320);
     for(let i=0; i<total; i++) {
@@ -201,8 +201,8 @@ function desenhar() {
         ctx.save(); ctx.translate(160,160); ctx.rotate(ang+(Math.PI*2/total)/2);
         
         ctx.fillStyle = (i === 6) ? "#fff" : "#880e4f"; 
-        ctx.font = "bold 17px 'Fredoka'"; // Fonte aumentada!
-        ctx.textAlign = "right"; ctx.fillText(premios[i], 145, 6); ctx.restore(); // Posição ajustada
+        ctx.font = "bold 17px 'Fredoka'"; 
+        ctx.textAlign = "right"; ctx.fillText(premios[i], 145, 6); ctx.restore(); 
     }
 }
 desenhar();
@@ -255,6 +255,8 @@ btnGirar.addEventListener("click", iniciarGiro);
 
 function fugir(e) {
     if(e.cancelable) e.preventDefault();
+    if(isFugindo) return; // Impede que a função rode duas vezes e quebre
+    isFugindo = true;
     
     const texto = document.createElement("div");
     texto.className = "deboche";
@@ -273,18 +275,28 @@ function fugir(e) {
 
     setTimeout(() => {
         btnNao.style.position = 'fixed';
-        btnNao.style.left = Math.max(20, Math.random()*(window.innerWidth-120)) + 'px';
-        btnNao.style.top = Math.max(20, Math.random()*(window.innerHeight-60)) + 'px';
+        btnNao.style.zIndex = '9999'; // Garante que fique acima de TUDO
+        
+        // Cálculo seguro de margens para ele NUNCA sair da tela
+        const maxX = window.innerWidth - 120;
+        const maxY = window.innerHeight - 80;
+        
+        btnNao.style.left = Math.max(20, Math.random() * maxX) + 'px';
+        btnNao.style.top = Math.max(20, Math.random() * maxY) + 'px';
+        
         btnNao.style.opacity = '1';
         btnNao.style.pointerEvents = 'auto';
-    }, 800); 
+        isFugindo = false; // Libera para fugir de novo
+    }, 500); // Reduzido para 0.5s para não parecer travado
 
-    escalaSim += 0.45; 
+    // O botão sim cresce um pouco menos por vez para não cobrir a tela inteira tão rápido
+    escalaSim += 0.3; 
     btnSim.style.transform = `scale(${escalaSim})`;
 }
 
 btnNao.addEventListener('touchstart', fugir, {passive: false});
 btnNao.addEventListener('mouseover', fugir);
+btnNao.addEventListener('click', fugir);
 
 btnSim.addEventListener('click', () => {
     choverFestiva(); 
