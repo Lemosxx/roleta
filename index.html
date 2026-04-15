@@ -23,7 +23,7 @@ body {
     background: rgba(255, 255, 255, 0.75); 
     backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
     border: 4px solid rgba(255, 255, 255, 0.9); 
-    border-radius: 40px; padding: 30px 20px;
+    border-radius: 40px; padding: 25px 20px;
     box-shadow: 0 15px 35px rgba(255, 154, 162, 0.3), inset 0 0 20px rgba(255,255,255,0.8); 
     width: 92%; max-width: 400px;
     text-align: center; transition: opacity 0.5s ease; position: relative; z-index: 10;
@@ -32,10 +32,10 @@ body {
 #tela2, #tela3 { display: none; opacity: 0; }
 
 h2 { color: #d81b60; margin-top: 0; font-size: 1.8rem; text-shadow: 2px 2px 0px white; }
-p { font-size: 1.15rem; color: #880e4f; margin-top: 10px; font-weight: 500; }
+p { font-size: 1.15rem; color: #880e4f; margin-top: 10px; font-weight: 500; line-height: 1.4; }
 
-/* ROLETA FOFA */
-.roleta-container { position: relative; width: 280px; height: 280px; margin: 20px auto; }
+/* ROLETA FOFA (AUMENTADA) */
+.roleta-container { position: relative; width: 310px; height: 310px; margin: 20px auto; }
 .ponteiro { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 45px; z-index: 20; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2)); }
 canvas { 
     border-radius: 50%; 
@@ -44,19 +44,23 @@ canvas {
     box-shadow: 0 10px 20px rgba(255, 154, 162, 0.5);
 }
 
-/* GIFS GRANDES E SEM CORTAR */
+/* GIFS BEM ENQUADRADOS */
 .gif-box { 
-    width: 100%; height: 250px; margin: 15px 0; border-radius: 25px; 
+    width: 100%; height: 210px; margin: 15px 0; border-radius: 25px; 
     display: flex; justify-content: center; align-items: center;
-    background: rgba(255, 255, 255, 0.6); border: 3px dashed #ffb7b2;
+    background: rgba(255, 255, 255, 0.8); border: 3px dashed #ffb7b2;
+    overflow: hidden; padding: 5px;
 }
-.gif-box img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); }
+.gif-box img { 
+    max-width: 100%; max-height: 100%; object-fit: contain; 
+    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); border-radius: 20px;
+}
 
-.area-botoes { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 20px; min-height: 100px; position: relative; }
+.area-botoes { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 20px; min-height: 90px; position: relative; }
 
 /* BOTÕES ARREDONDADOS */
 button { 
-    border: none; padding: 18px 30px; font-size: 1.2rem; font-weight: bold; 
+    border: none; padding: 18px 25px; font-size: 1.2rem; font-weight: bold; 
     font-family: inherit; border-radius: 50px; cursor: pointer; 
     transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
 }
@@ -112,7 +116,7 @@ button {
     
     <div class="roleta-container">
         <div class="ponteiro">💖</div>
-        <canvas id="roleta" width="300" height="300"></canvas>
+        <canvas id="roleta" width="320" height="320"></canvas>
     </div>
 
     <button id="girar">Girar (1/3) ✨</button>
@@ -120,11 +124,11 @@ button {
 </div>
 
 <div class="glass-panel" id="tela2">
-    <h2>🎉 DEU CINEMINHA!</h2>
+    <h2>🎉 AÍ SIM!!!</h2>
     <div class="gif-box">
         <img src="https://i.pinimg.com/originals/42/61/ec/4261ec8b20a4ec6f9cf047250024371f.gif" alt="Cat GIF">
     </div>
-    <p>Não tem jeito, é o destino! Aceita ir comigo? ❤️🍿</p>
+    <p>Você ganhou um <b>date pro cinema</b> comigo com <b>TUDO PAGO!</b> Não tem jeito, é o destino! Aceita ir? ❤️🍿</p>
     <div class="area-botoes">
         <button id="btn-sim">Sim! ❤️</button>
         <button id="btn-nao">Não 😢</button>
@@ -139,10 +143,10 @@ button {
     <div class="detalhes">
         <h3>🎬 Filme: O Nosso grande beijo</h3>
         <h3>📍 Local: Shopping Recife</h3>
+        <h3>📅 Data: Dia 18</h3>
         <h3>🕒 Horário: 14:00</h3>
-        <h3>Dia: 18 </h3>
     </div>
-    <p style="margin-top:15px; color:#d81b60; font-weight:bold; font-size: 1.3rem;">Mal posso esperar! ❤️</p>
+    <p style="margin-top:15px; color:#d81b60; font-weight:bold; font-size: 1.25rem;">Vá bem bonita e cheirosa e não se preocupe com nada! ❤️</p>
 </div>
 
 <script>
@@ -173,33 +177,32 @@ function tocarTique() {
     const osc = audioCtx.createOscillator();
     const g = audioCtx.createGain();
     osc.connect(g); g.connect(audioCtx.destination);
-    osc.frequency.setValueAtTime(600, audioCtx.currentTime); // Som mais suave
+    osc.frequency.setValueAtTime(600, audioCtx.currentTime); 
     osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.04);
     g.gain.setValueAtTime(0.08, audioCtx.currentTime);
     g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.04);
     osc.start(); osc.stop(audioCtx.currentTime + 0.04);
 }
 
-// Paleta em tons pastel fofinhos
 const premios = ["Carrinho Shein 🛍️", "Cupom de 100💎", "Jantar 🍝", "Massagem 💆", "Dia de Princesa 👑", "Chocolate 🍫", "Cineminha ❤️"];
-const cores = ["#FFB7B2", "#FFDAC1", "#E2F0CB", "#B5EAD7", "#C7CEEA", "#F1CBFF", "#ff758c"]; // O cinema fica em destaque
+const cores = ["#FFB7B2", "#FFDAC1", "#E2F0CB", "#B5EAD7", "#C7CEEA", "#F1CBFF", "#ff758c"]; 
 const total = premios.length;
 const fatia = 360 / total;
 
 let rotacao = 0, girando = false, tentativas = 0, escalaSim = 1;
 
+// Roleta com raio maior e fontes ajustadas
 function desenhar() {
-    ctx.clearRect(0,0,300,300);
+    ctx.clearRect(0,0,320,320);
     for(let i=0; i<total; i++) {
         const ang = i * (Math.PI*2/total);
         ctx.beginPath(); ctx.fillStyle = cores[i%cores.length];
-        ctx.moveTo(150,150); ctx.arc(150,150,150,ang,ang+(Math.PI*2/total)); ctx.fill();
-        ctx.save(); ctx.translate(150,150); ctx.rotate(ang+(Math.PI*2/total)/2);
+        ctx.moveTo(160,160); ctx.arc(160,160,160,ang,ang+(Math.PI*2/total)); ctx.fill();
+        ctx.save(); ctx.translate(160,160); ctx.rotate(ang+(Math.PI*2/total)/2);
         
-        // Cor do texto baseada na cor do fundo (Cinema é branco, os outros são escuros)
         ctx.fillStyle = (i === 6) ? "#fff" : "#880e4f"; 
-        ctx.font = "bold 16px 'Fredoka'"; 
-        ctx.textAlign = "right"; ctx.fillText(premios[i], 135, 5); ctx.restore();
+        ctx.font = "bold 17px 'Fredoka'"; // Fonte aumentada!
+        ctx.textAlign = "right"; ctx.fillText(premios[i], 145, 6); ctx.restore(); // Posição ajustada
     }
 }
 desenhar();
@@ -211,7 +214,6 @@ function choverFestiva() {
         e.innerText = emojis[Math.floor(Math.random()*emojis.length)];
         e.style.position = "fixed"; e.style.top = "-50px"; e.style.left = Math.random()*100+"vw";
         e.style.fontSize = Math.random() * 25 + 15 + "px"; e.style.zIndex = "1000";
-        // Chuva mais lenta e duradoura
         e.style.animation = `chuvaLenta ${Math.random()*4+3}s linear forwards`;
         document.body.appendChild(e); setTimeout(()=>e.remove(), 7000);
     }
@@ -254,7 +256,6 @@ btnGirar.addEventListener("click", iniciarGiro);
 function fugir(e) {
     if(e.cancelable) e.preventDefault();
     
-    // Tira onda (Balão de deboche)
     const texto = document.createElement("div");
     texto.className = "deboche";
     texto.innerText = frasesDeboche[Math.floor(Math.random()*frasesDeboche.length)];
@@ -265,10 +266,8 @@ function fugir(e) {
     texto.style.top = (posY - 40) + "px";
     
     document.body.appendChild(texto);
-    // Fica na tela por 2 segundos
     setTimeout(() => texto.remove(), 2000);
 
-    // Some por 0.8 segundos (um "gelo" maior)
     btnNao.style.opacity = '0';
     btnNao.style.pointerEvents = 'none';
 
@@ -280,7 +279,6 @@ function fugir(e) {
         btnNao.style.pointerEvents = 'auto';
     }, 800); 
 
-    // Aumenta o Sim
     escalaSim += 0.45; 
     btnSim.style.transform = `scale(${escalaSim})`;
 }
@@ -290,7 +288,7 @@ btnNao.addEventListener('mouseover', fugir);
 
 btnSim.addEventListener('click', () => {
     choverFestiva(); 
-    setTimeout(choverFestiva, 1500); // Chuva dupla pra comemorar
+    setTimeout(choverFestiva, 1500); 
     tela2.style.display = "none"; 
     tela3.style.display = "block"; 
     setTimeout(()=>tela3.style.opacity="1", 50);
