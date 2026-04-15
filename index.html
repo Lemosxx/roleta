@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Surpresa pra Você ❤️</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+    font-family: 'Fredoka', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100vw;
+    overflow: hidden; 
+    color: #4a4a4a;
+}
+
+/* Painel estilo Vidro Fosco (Premium) */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 24px;
+    padding: 30px 20px;
+    box-shadow: 0 10px 30px rgba(255, 105, 135, 0.2);
+    width: 90%;
+    max-width: 380px;
+    text-align: center;
+    transition: opacity 0.5s ease;
+    position: relative;
+    z-index: 10;
+}
+
+#tela2, #tela3 {
+    display: none;
+    opacity: 0;
+}
+
+h2 { color: #d81b60; margin-top: 0; font-size: 1.8rem; }
+h3 { color: #e91e63; margin-top: 15px; font-size: 1.3rem; }
+p { font-size: 1.1rem; color: #555; margin-top: 10px; font-weight: 500; }
+
+/* === A ROLETA === */
+.roleta-container {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    margin: 20px auto;
+}
+
+.ponteiro {
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 40px;
+    z-index: 20;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+}
+
+canvas {
+    border-radius: 50%;
+    box-shadow: 0 10px 25px rgba(216, 27, 96, 0.3);
+    border: 5px solid #fff;
+    width: 100%;
+    height: 100%;
+}
+
+img {
+    width: 100%;
+    max-height: 180px;
+    object-fit: contain;
+    margin-top: 10px;
+    border-radius: 15px;
+    pointer-events: none;
+}
+
+/* === BOTÕES === */
+.area-botoes {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+    height: 60px;
+}
+
+button {
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    font-family: inherit;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255, 105, 135, 0.3);
+    touch-action: manipulation;
+}
+
+#girar {
+    background: linear-gradient(45deg, #ff416c, #ff4b2b);
+    color: white;
+    width: 80%;
+    margin-top: 15px;
+    transition: transform 0.2s;
+    animation: pulse-anim 2s infinite;
+}
+
+@keyframes pulse-anim {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+#girar:active { transform: scale(0.95); }
+
+#btn-sim {
+    background: linear-gradient(45deg, #ff416c, #ff4b2b);
+    color: white;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 999;
+}
+
+#btn-nao {
+    background: #f8bbd0;
+    color: #880e4f;
+    position: relative;
+    z-index: 50;
+}
+
+.resultado {
+    margin-top: 20px;
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: #c2185b;
+    min-height: 28px;
+}
+
+/* === DETALHES DO ENCONTRO === */
+.detalhes {
+    text-align: left;
+    background: rgba(255, 255, 255, 0.7);
+    padding: 20px;
+    border-radius: 15px;
+    margin-top: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+.detalhes h3 { margin-top: 10px; font-size: 1.2rem; color: #ad1457; }
+.detalhes h3:first-child { margin-top: 0; }
+
+/* === EFEITOS E ANIMAÇÕES === */
+@keyframes fall {
+    0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+}
+@keyframes floatUp {
+    0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+    20% { opacity: 1; }
+    100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="glass-panel" id="tela1">
+    <h2>🎡 Roleta do Amor 🎡</h2>
+
+    <div class="roleta-container">
+        <div class="ponteiro">🔻</div>
+        <canvas id="roleta" width="300" height="300"></canvas>
+    </div>
+
+    <button id="girar">Girar Sorte 💖</button>
+    <div class="resultado" id="resultado"></div>
+</div>
+
+<div class="glass-panel" id="tela2">
+    <h2>🎉 DEU CINEMA!</h2>
+    <img src="https://media.tenor.com/efhiB6ED9g8AAAAi/tkthao219-bubududu.gif">
+    
+    <p>O destino escolheu! Aceita ir comigo? ❤️🍿</p>
+
+    <div class="area-botoes">
+        <button id="btn-sim">Sim! ❤️</button>
+        <button id="btn-nao">Não 😢</button>
+    </div>
+</div>
+
+<div class="glass-panel" id="tela3">
+    <h2>Nosso encontro 💕</h2>
+    <img src="https://media.tenor.com/gUiu1zyxfzYAAAAi/bear-kiss-bear-kisses.gif">
+
+    <div class="detalhes">
+        <h3>🎬 Filme: Vingadores <br><span style="font-size:0.9rem; color:#888;">(ou o que você quiser)</span></h3>
+        <h3>📍 Local: Shopping Recife</h3>
+        <h3>🕒 Horário: 20:00</h3>
+    </div>
+
+    <p style="margin-top:15px; color:#e91e63; font-weight:bold;">Mal posso esperar pra te ver! ❤️</p>
+</div>
+
+<script>
+// === CONFIGURAÇÕES DA ROLETA ===
+const canvas = document.getElementById("roleta");
+const ctx = canvas.getContext("2d");
+const btnGirar = document.getElementById("girar");
+const resultado = document.getElementById("resultado");
+
+const tela1 = document.getElementById("tela1");
+const tela2 = document.getElementById("tela2");
+const tela3 = document.getElementById("tela3");
+
+const btnSim = document.getElementById("btn-sim");
+const btnNao = document.getElementById("btn-nao");
+
+// Som de sininho mágico para o final
+const audio = new Audio("https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3");
+
+const premios = [
+    "Carrinho Shein 🛍️", "Cupom R$100 💎", "Jantar 🍝",
+    "Massagem 💆", "Dia de Princesa 👑", "Chocolate 🍫", "CINEMA ❤️"
+];
+const cores = ["#ff9a9e", "#fecfef", "#fbc2eb", "#f48fb1", "#ffb199", "#ff0844", "#ffb199"];
+const total = premios.length;
+const angulo = (2 * Math.PI) / total;
+
+let rotacaoAtual = 0;
+let girando = false;
+let escalaSim = 1;
+
+// === DESENHAR A ROLETA ===
+function desenhar() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < total; i++) {
+        const ang = i * angulo;
+        ctx.beginPath();
+        ctx.fillStyle = cores[i % cores.length];
+        ctx.moveTo(150, 150);
+        ctx.arc(150, 150, 150, ang, ang + angulo);
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#ffffff";
+        ctx.stroke();
+        
+        ctx.save();
+        ctx.translate(150, 150);
+        ctx.rotate(ang + angulo / 2);
+        ctx.fillStyle = (i === 5 || i === 6) ? "#ffffff" : "#4a4a4a"; 
+        ctx.font = "bold 14px 'Fredoka', sans-serif";
+        ctx.textAlign = "right";
+        ctx.fillText(premios[i], 135, 5);
+        ctx.restore();
+    }
+}
+desenhar();
+
+// === EFEITOS ESPECIAIS (CONFETE E CORAÇÃO) ===
+function atirarConfetes() {
+    const coresConfete = ['#ff416c', '#ff4b2b', '#fbc2eb', '#ffffff', '#ffd700'];
+    for (let i = 0; i < 100; i++) {
+        const el = document.createElement("div");
+        el.style.position = "fixed";
+        el.style.width = Math.random() * 8 + 4 + "px";
+        el.style.height = Math.random() * 15 + 5 + "px";
+        el.style.background = coresConfete[Math.floor(Math.random() * coresConfete.length)];
+        el.style.top = "-20px";
+        el.style.left = Math.random() * 100 + "vw";
+        el.style.borderRadius = "2px";
+        el.style.zIndex = "9999";
+        el.style.animation = `fall ${Math.random() * 2 + 1.5}s linear forwards`;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 3500);
+    }
+}
+
+function choverCoracoes() {
+    for (let i = 0; i < 50; i++) {
+        const heart = document.createElement("div");
+        heart.innerText = Math.random() > 0.5 ? "💖" : "❤️";
+        heart.style.position = "fixed";
+        heart.style.bottom = "-20px";
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.fontSize = Math.random() * 20 + 15 + "px";
+        heart.style.zIndex = "9999";
+        heart.style.animation = `floatUp ${Math.random() * 2 + 2}s ease-in forwards`;
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 4000);
+    }
+}
+
+// === LÓGICA DE GIRAR (COM SUSPENSE E VIBRAÇÃO) ===
+btnGirar.addEventListener("touchstart", iniciarGiro, { passive: false });
+btnGirar.addEventListener("click", iniciarGiro);
+
+function iniciarGiro(e) {
+    if (e.cancelable) e.preventDefault();
+    if (girando) return;
+    girando = true;
+
+    btnGirar.style.animation = "none"; // Para de pulsar
+    resultado.innerText = "Cruzando os dedos... 🫣";
+
+    // Simula a vibração dos "estalos" da roleta enquanto gira (funciona em Android e em alguns iOS)
+    let tempoVibracao = 0;
+    let intervaloVibracao = setInterval(() => {
+        if (navigator.vibrate) navigator.vibrate(15);
+        tempoVibracao += 150;
+        if (tempoVibracao > 6500) clearInterval(intervaloVibracao); // Para a vibração perto do fim
+    }, 150);
+
+    const voltas = 8; // Muitas voltas
+    const indexAlvo = 6; // O CINEMA
+    
+    // Matemática milimétrica: faz a roleta parar quase na pontinha final do "Cinema", 
+    // rastejando lentamente pela fatia anterior (Carrinho Shein) para criar a enganação.
+    const anguloFatia = 360 / total;
+    const angAlvo = (total - indexAlvo) * anguloFatia + 270 - (anguloFatia / 2) - 10; 
+
+    rotacaoAtual += (360 * voltas) + angAlvo;
+
+    // Transição de SETE SEGUNDOS com curva super suave no final (A "enganação")
+    canvas.style.transition = "transform 7s cubic-bezier(0.1, 0.8, 0.1, 1)"; 
+    canvas.style.transform = `rotate(${rotacaoAtual}deg)`;
+
+    // Quando finalmente parar (após 7 segundos)
+    setTimeout(() => {
+        audio.play().catch(e => console.log("Áudio necessita interação prévia"));
+        if (navigator.vibrate) navigator.vibrate([200, 100, 200]); // Vibração de vitória
+        
+        atirarConfetes();
+        resultado.innerText = "🎉 AÍ SIM!!!";
+        
+        // Espera 2 segundinhos pra ela comemorar e troca de tela
+        setTimeout(() => {
+            tela1.style.opacity = "0";
+            setTimeout(() => {
+                tela1.style.display = "none";
+                tela2.style.display = "block";
+                setTimeout(() => tela2.style.opacity = "1", 50); 
+            }, 500);
+        }, 2000);
+
+    }, 7000); 
+}
+
+// === LÓGICA DO BOTÃO FUGITIVO (TELA 2) ===
+function fugir(e) {
+    if (e.cancelable) e.preventDefault();
+
+    btnNao.style.position = 'fixed'; 
+
+    const maxLargura = window.innerWidth - btnNao.offsetWidth - 20;
+    const maxAltura = window.innerHeight - btnNao.offsetHeight - 20;
+
+    const randomX = Math.max(10, Math.floor(Math.random() * maxLargura));
+    const randomY = Math.max(10, Math.floor(Math.random() * maxAltura));
+
+    btnNao.style.left = randomX + 'px';
+    btnNao.style.top = randomY + 'px';
+
+    escalaSim += 0.3; // O botão SIM vai inflando
+    btnSim.style.transform = `scale(${escalaSim})`;
+}
+
+btnNao.addEventListener('touchstart', fugir, { passive: false });
+btnNao.addEventListener('mouseover', fugir);
+btnNao.addEventListener('click', fugir);
+
+// === ACEITOU O CONVITE (TELA 3) ===
+function aceitouEncontro(e) {
+    if (e.cancelable) e.preventDefault();
+    
+    choverCoracoes(); 
+    
+    tela2.style.opacity = "0";
+    setTimeout(() => {
+        tela2.style.display = "none";
+        tela3.style.display = "block";
+        setTimeout(() => tela3.style.opacity = "1", 50); 
+    }, 500);
+}
+
+btnSim.addEventListener('click', aceitouEncontro);
+btnSim.addEventListener('touchstart', aceitouEncontro, { passive: false });
+
+</script>
+
+</body>
+</html>
